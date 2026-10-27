@@ -1,0 +1,4318 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>NetLab Jaringan: Belajar Jaringan Komputer</title>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap">
+  <style>
+    :root {
+      box-sizing: border-box;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      --bg: #eef4ff;
+      --panel: #ffffff;
+      --ink: #14213d;
+      --mut: #586a8a;
+      --line: #cfdcf2;
+      --acc: #3b5bff;
+      --accink: #ffffff;
+      --pk: #ffb703;
+      --bad: #e63e6d;
+      --ok: #08a36f;
+      --node: #e4edff;
+      --soft: #f3f7ff;
+      --y: #ffb703;
+      --pu: #8b5cf6
+    }
+
+    @media (prefers-color-scheme:dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0e1126;
+        --panel: #181d3b;
+        --ink: #eef1ff;
+        --mut: #a5aed3;
+        --line: #2d3566;
+        --acc: #8193ff;
+        --accink: #0e1126;
+        --pk: #ffd166;
+        --bad: #ff6b8b;
+        --ok: #3ddc97;
+        --node: #242a56;
+        --soft: #131833;
+        --y: #ffd166;
+        --pu: #a78bfa
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #0e1126;
+      --panel: #181d3b;
+      --ink: #eef1ff;
+      --mut: #a5aed3;
+      --line: #2d3566;
+      --acc: #8193ff;
+      --accink: #0e1126;
+      --pk: #ffd166;
+      --bad: #ff6b8b;
+      --ok: #3ddc97;
+      --node: #242a56;
+      --soft: #131833;
+      --y: #ffd166;
+      --pu: #a78bfa
+    }
+
+    html {
+      scroll-padding-top: env(safe-area-inset-top, 0px)
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 16px/1.55 "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif
+    }
+
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 20px 16px 40px
+    }
+
+    h1 {
+      font-size: clamp(28px, 6vw, 44px);
+      line-height: 1.05;
+      margin: 8px 0 6px;
+      letter-spacing: -.02em
+    }
+
+    h2 {
+      font-size: 19px;
+      margin: 0 0 8px
+    }
+
+    .sub {
+      color: var(--mut);
+      margin: 0 0 16px;
+      max-width: 62ch
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 14px
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--ink);
+      padding: 9px 14px;
+      border-radius: 8px
+    }
+
+    button:hover {
+      border-color: var(--acc)
+    }
+
+    button:focus-visible,
+    input:focus-visible {
+      outline: 3px solid var(--acc);
+      outline-offset: 2px
+    }
+
+    button.on {
+      background: var(--acc);
+      color: var(--accink);
+      border-color: var(--acc);
+      font-weight: 700
+    }
+
+    button:disabled {
+      opacity: .45;
+      cursor: not-allowed
+    }
+
+    input[type=text],
+    select {
+      font: inherit;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--ink);
+      flex: 1 1 220px;
+      min-width: 0
+    }
+
+    label {
+      color: var(--mut);
+      font-size: 14px
+    }
+
+    .note {
+      color: var(--mut);
+      font-size: 14px;
+      margin: 8px 0 0
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      display: block
+    }
+
+    .ln {
+      stroke: var(--line);
+      stroke-width: 3;
+      stroke-linecap: round
+    }
+
+    .nd circle {
+      fill: var(--node);
+      stroke: var(--line);
+      stroke-width: 2;
+      transition: stroke .2s, fill .2s
+    }
+
+    .nd.on circle {
+      stroke: var(--acc);
+      stroke-width: 4
+    }
+
+    .nd.bad circle {
+      stroke: var(--bad);
+      stroke-width: 4;
+      fill: color-mix(in srgb, var(--bad) 18%, var(--node))
+    }
+
+    .nd text.ic {
+      font-size: 22px;
+      text-anchor: middle;
+      dominant-baseline: central
+    }
+
+    .nd text.lb {
+      font-size: 12px;
+      text-anchor: middle;
+      fill: var(--ink)
+    }
+
+    #pk circle {
+      fill: var(--pk);
+      stroke: var(--ink);
+      stroke-width: 2
+    }
+
+    #pk.bad circle {
+      fill: var(--bad)
+    }
+
+    .stepbox {
+      margin-top: 8px;
+      padding: 10px 14px;
+      border-left: 5px solid var(--acc);
+      background: var(--soft);
+      border-radius: 0 8px 8px 0
+    }
+
+    .stepbox.bad {
+      border-color: var(--bad)
+    }
+
+    .stepbox b {
+      font-size: 18px
+    }
+
+    .stepbox p {
+      margin: 4px 0 0
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 12px
+    }
+
+    .stats div {
+      background: var(--soft);
+      border-radius: 8px;
+      padding: 8px 12px
+    }
+
+    .stats b {
+      display: block;
+      font-size: 24px;
+      line-height: 1.15
+    }
+
+    .stats small {
+      color: var(--mut)
+    }
+
+    .layers {
+      display: grid;
+      gap: 6px
+    }
+
+    .ly {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 10px;
+      align-items: center;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px dashed var(--line);
+      color: var(--mut)
+    }
+
+    .ly.has {
+      border-style: solid;
+      border-color: var(--acc);
+      background: var(--soft);
+      color: var(--ink)
+    }
+
+    .ly strong {
+      font-size: 14px
+    }
+
+    .ly code {
+      font-family: ui-monospace, Menlo, Consolas, monospace;
+      font-size: 13px;
+      word-break: break-word
+    }
+
+    .two {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px
+    }
+
+    @media(max-width:720px) {
+      .two {
+        grid-template-columns: 1fr
+      }
+
+      .ly {
+        grid-template-columns: 1fr;
+        gap: 2px
+      }
+    }
+
+    ol.sl {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 4px;
+      counter-reset: s
+    }
+
+    ol.sl li {
+      counter-increment: s
+    }
+
+    ol.sl button {
+      width: 100%;
+      text-align: left;
+      padding: 7px 10px;
+      font-size: 14px
+    }
+
+    ol.sl button::before {
+      content: counter(s) ". ";
+      color: var(--mut)
+    }
+
+    ol.sl button.cur {
+      border-color: var(--acc);
+      background: var(--soft);
+      font-weight: 700
+    }
+
+    .hide {
+      display: none
+    }
+
+    .fb {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 8px
+    }
+
+    .fb.ok {
+      background: color-mix(in srgb, var(--ok) 20%, transparent)
+    }
+
+    .fb.no {
+      background: color-mix(in srgb, var(--bad) 20%, transparent)
+    }
+
+    #chBtns {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px
+    }
+
+    #chBtns button {
+      text-align: left
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px
+    }
+
+    .ln.dead {
+      stroke: var(--bad);
+      stroke-dasharray: 4 6
+    }
+
+    .tn rect,
+    .tn circle {
+      fill: var(--node);
+      stroke: var(--line);
+      stroke-width: 2;
+      cursor: pointer
+    }
+
+    .tn:hover rect,
+    .tn:hover circle {
+      stroke: var(--acc)
+    }
+
+    .tn.bad rect,
+    .tn.bad circle {
+      fill: color-mix(in srgb, var(--bad) 18%, var(--node));
+      stroke: var(--bad);
+      stroke-width: 4
+    }
+
+    .tn.bad text.ic {
+      opacity: .35
+    }
+
+    .tn text.lb {
+      font-size: 12px;
+      text-anchor: middle;
+      fill: var(--ink);
+      pointer-events: none
+    }
+
+    .tn text.ic {
+      font-size: 22px;
+      text-anchor: middle;
+      dominant-baseline: central;
+      pointer-events: none
+    }
+
+    details.panel summary {
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 17px
+    }
+
+    details.panel[open] summary {
+      margin-bottom: 10px
+    }
+
+    details ul {
+      margin: 6px 0 0;
+      padding-left: 20px
+    }
+
+    #zBtns {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px
+    }
+
+    #zBtns button {
+      text-align: left
+    }
+
+    #chNext,
+    #zNext {
+      margin-top: 10px
+    }
+
+    .fgrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 10px
+    }
+
+    @media(max-width:720px) {
+      .fgrid {
+        grid-template-columns: 1fr
+      }
+    }
+
+    .fld {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 6px
+    }
+
+    .fld input,
+    .fld select {
+      font: inherit;
+      padding: 7px 9px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--ink);
+      min-width: 0;
+      width: 100%
+    }
+
+    .zn {
+      fill: var(--soft);
+      stroke: var(--line);
+      stroke-width: 2;
+      stroke-dasharray: 6 6
+    }
+
+    .zt {
+      font-size: 12px;
+      fill: var(--mut)
+    }
+
+    .ln.ok {
+      stroke: var(--ok);
+      stroke-width: 5
+    }
+
+    .nd.ok circle {
+      stroke: var(--ok);
+      stroke-width: 4
+    }
+
+    .lg {
+      list-style: none;
+      padding: 0;
+      margin: 10px 0 0;
+      display: grid;
+      gap: 5px
+    }
+
+    .lg li {
+      padding: 6px 10px;
+      border-left: 4px solid var(--line);
+      background: var(--soft);
+      border-radius: 0 6px 6px 0;
+      font-size: 14px
+    }
+
+    .lg li.ok {
+      border-color: var(--ok)
+    }
+
+    .lg li.bad {
+      border-color: var(--bad)
+    }
+
+    .lg li.h {
+      border-color: var(--acc);
+      font-weight: 700;
+      background: var(--bg);
+    }
+
+    .nb {
+      color: var(--acc);
+      font-weight: 700
+    }
+
+    .hb {
+      color: var(--mut)
+    }
+
+    .bin {
+      font-family: ui-monospace, Menlo, Consolas, monospace;
+      font-size: clamp(13px, 3.4vw, 20px);
+      word-break: break-all;
+      margin: 8px 0
+    }
+
+    th {
+      white-space: nowrap;
+      text-align: left;
+      padding-right: 15px;
+    }
+
+    .scroll {
+      overflow-x: auto;
+    }
+
+    .stp {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      margin: 18px 0 8px
+    }
+
+    .stp span {
+      display: inline-grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--acc);
+      color: var(--accink);
+      font-size: 13px
+    }
+
+    .chk {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin: 0 0 6px;
+      font-size: 14px;
+      color: var(--mut)
+    }
+
+    #kCards h4 {
+      margin: 12px 0 6px;
+      font-size: 12px;
+      color: var(--mut);
+      text-transform: uppercase;
+      letter-spacing: .05em
+    }
+
+    .scg {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 8px
+    }
+
+    button.sc {
+      text-align: left;
+      display: block;
+      padding: 10px 12px
+    }
+
+    button.sc b {
+      display: block;
+      font-size: 15px
+    }
+
+    button.sc small {
+      display: block;
+      color: var(--mut);
+      line-height: 1.35;
+      margin-top: 2px
+    }
+
+    button.sc.on small {
+      color: var(--accink)
+    }
+
+    .netbox {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      font-size: 14px;
+      line-height: 1.8
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 1px 9px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--bg)
+    }
+
+    .tag.ok {
+      background: var(--ok)
+    }
+
+    .tag.no {
+      background: var(--bad)
+    }
+
+    .flag {
+      outline: 3px solid var(--ok);
+      outline-offset: 1px
+    }
+
+    .flag.badf {
+      outline-color: var(--bad)
+    }
+
+    #kInfo p {
+      margin: 4px 0 0;
+      font-size: 14px
+    }
+
+    .kip-mode {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 4px 0 10px;
+      padding: 11px 13px;
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      background: var(--soft);
+      cursor: pointer;
+      transition: border-color .2s, background .2s
+    }
+
+    .kip-mode.on {
+      border-color: var(--acc);
+      background: color-mix(in srgb, var(--acc) 8%, var(--panel))
+    }
+
+    .kip-mode input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0
+    }
+
+    .km-icon {
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      font-size: 20px
+    }
+
+    .kip-mode.on .km-icon {
+      border-color: var(--acc)
+    }
+
+    .km-copy {
+      flex: 1;
+      min-width: 0
+    }
+
+    .km-copy b {
+      display: block;
+      font-family: "Fredoka", sans-serif;
+      font-size: 15px;
+      color: var(--ink)
+    }
+
+    .km-copy small {
+      display: block;
+      margin-top: 2px;
+      color: var(--mut);
+      font-size: 12.5px;
+      line-height: 1.35
+    }
+
+    .km-switch {
+      position: relative;
+      flex: 0 0 auto;
+      width: 46px;
+      height: 26px;
+      border-radius: 99px;
+      background: var(--line);
+      transition: background .2s
+    }
+
+    .km-switch i {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(20, 33, 61, .25);
+      transition: transform .2s
+    }
+
+    .kip-mode input:checked + .km-switch {
+      background: var(--acc)
+    }
+
+    .kip-mode input:checked + .km-switch i {
+      transform: translateX(20px)
+    }
+
+    .kip-mode input:focus-visible + .km-switch {
+      outline: 3px solid var(--acc);
+      outline-offset: 2px
+    }
+
+    .kip-brief {
+      margin-top: 10px;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--acc) 7%, var(--panel)), var(--soft))
+    }
+
+    .ki-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    .ki-head b {
+      font-size: 16px
+    }
+
+    .ki-level {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 99px;
+      background: var(--acc);
+      color: var(--accink);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .02em
+    }
+
+    .ki-row {
+      display: grid;
+      grid-template-columns: 112px 1fr;
+      gap: 8px;
+      margin-top: 7px;
+      font-size: 14px;
+      line-height: 1.45
+    }
+
+    .ki-row b {
+      color: var(--ink);
+      font-size: 13px
+    }
+
+    .ki-row span {
+      color: var(--mut)
+    }
+
+    .nc-title {
+      font-family: "Fredoka", sans-serif;
+      font-size: 15px;
+      color: var(--ink)
+    }
+
+    .nc-row {
+      display: grid;
+      grid-template-columns: 105px 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 7px 0;
+      border-top: 1px dashed var(--line);
+      font-size: 13.5px
+    }
+
+    .nc-side {
+      font-weight: 700;
+      color: var(--ink)
+    }
+
+    .nc-flow {
+      color: var(--mut);
+      line-height: 1.4
+    }
+
+    .nc-flow b {
+      color: var(--ink)
+    }
+
+    .nc-note {
+      display: block;
+      margin-top: 5px;
+      color: var(--mut);
+      line-height: 1.4
+    }
+
+    .guesscard {
+      margin-top: 4px;
+      padding: 14px;
+      border: 2px solid var(--acc);
+      border-radius: 14px;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--acc) 9%, var(--panel)), var(--panel));
+      box-shadow: 0 4px 0 color-mix(in srgb, var(--acc) 20%, transparent)
+    }
+
+    .gc-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    .gc-top b {
+      font-family: "Fredoka", sans-serif;
+      font-size: 18px
+    }
+
+    .gc-lock {
+      padding: 2px 8px;
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      background: var(--panel);
+      color: var(--mut);
+      font-size: 11px;
+      font-weight: 700
+    }
+
+    .guesscard > p {
+      margin: 6px 0 10px;
+      color: var(--mut);
+      font-size: 14px
+    }
+
+    .guess-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px
+    }
+
+    button.guess {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 12px;
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+      text-align: left
+    }
+
+    button.guess .g-ic {
+      flex: 0 0 auto;
+      font-size: 24px;
+      line-height: 1
+    }
+
+    button.guess .g-tx {
+      min-width: 0
+    }
+
+    button.guess b {
+      display: block;
+      font-size: 15px
+    }
+
+    button.guess small {
+      display: block;
+      margin-top: 2px;
+      color: var(--mut);
+      font-size: 12px;
+      line-height: 1.3
+    }
+
+    button.guess.yes:hover,
+    button.guess.yes:focus-visible {
+      border-color: var(--ok);
+      background: color-mix(in srgb, var(--ok) 8%, var(--panel))
+    }
+
+    button.guess.no:hover,
+    button.guess.no:focus-visible {
+      border-color: var(--bad);
+      background: color-mix(in srgb, var(--bad) 8%, var(--panel))
+    }
+
+    .guess-note {
+      margin: 9px 0 0 !important;
+      font-size: 12.5px !important
+    }
+
+    .lockedbox {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 10px;
+      padding: 12px 14px;
+      border: 2px dashed var(--line);
+      border-radius: 12px;
+      background: var(--soft);
+      color: var(--mut)
+    }
+
+    .lockedbox > span {
+      font-size: 26px
+    }
+
+    .lockedbox b {
+      display: block;
+      color: var(--ink);
+      font-family: "Fredoka", sans-serif
+    }
+
+    .lockedbox p {
+      margin: 2px 0 0;
+      font-size: 13px;
+      line-height: 1.4
+    }
+
+    .guess-fb {
+      display: none;
+      margin: 0 0 8px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--soft);
+      font-size: 14px;
+      line-height: 1.45
+    }
+
+    .guess-fb:not(:empty) {
+      display: block
+    }
+
+    .guess-fb.good {
+      border-color: var(--ok);
+      background: color-mix(in srgb, var(--ok) 9%, var(--panel))
+    }
+
+    .guess-fb.bad {
+      border-color: var(--bad);
+      background: color-mix(in srgb, var(--bad) 9%, var(--panel))
+    }
+
+    .guess-fb b {
+      font-family: "Fredoka", sans-serif
+    }
+
+    .guess-fb .retry {
+      display: block;
+      width: max-content;
+      max-width: 100%;
+      margin-top: 7px;
+      padding: 6px 10px;
+      font-size: 13px
+    }
+
+    @media(max-width:600px) {
+      .ki-row {
+        grid-template-columns: 1fr;
+        gap: 1px
+      }
+
+      .nc-row {
+        grid-template-columns: 1fr auto
+      }
+
+      .nc-side {
+        grid-column: 1 / -1
+      }
+
+      .guess-actions {
+        grid-template-columns: 1fr
+      }
+    }
+
+    body {
+      background-image: radial-gradient(color-mix(in srgb, var(--acc) 14%, transparent) 1.5px, transparent 1.5px);
+      background-size: 24px 24px
+    }
+
+    h1,
+    h2,
+    h3,
+    button,
+    .tabs button {
+      font-family: "Fredoka", "Nunito", system-ui, sans-serif
+    }
+
+    button {
+      border-width: 2px 2px 4px;
+      border-radius: 12px;
+      font-weight: 600;
+      transition: transform .08s, border-color .15s
+    }
+
+    button:hover {
+      transform: translateY(-1px)
+    }
+
+    button:active {
+      transform: translateY(2px);
+      border-bottom-width: 2px
+    }
+
+    button.on {
+      border-color: color-mix(in srgb, var(--acc) 60%, #000)
+    }
+
+    .panel {
+      border-radius: 16px;
+      border-width: 2px;
+      box-shadow: 0 4px 0 var(--line)
+    }
+
+    .stepbox {
+      border-radius: 0 12px 12px 0
+    }
+
+    .stepbox b {
+      font-family: "Fredoka", sans-serif
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr minmax(250px, 330px);
+      gap: 14px;
+      align-items: stretch;
+      margin-bottom: 14px
+    }
+
+    @media(max-width:720px) {
+      .hero {
+        grid-template-columns: 1fr
+      }
+    }
+
+    .hero h1 {
+      font-size: clamp(34px, 8vw, 56px);
+      margin: 0;
+      color: var(--acc);
+      background: linear-gradient(90deg, var(--acc), var(--pu));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent
+    }
+
+    .pcard {
+      background: var(--panel);
+      border: 2px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 4px 0 var(--line);
+      padding: 12px 14px
+    }
+
+    .plv {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: "Fredoka", sans-serif
+    }
+
+    .plv span {
+      background: var(--y);
+      color: #3a2a00;
+      font-weight: 700;
+      padding: 2px 12px;
+      border-radius: 99px
+    }
+
+    .plv b {
+      font-size: 18px
+    }
+
+    .xpbar {
+      height: 14px;
+      background: var(--soft);
+      border: 2px solid var(--line);
+      border-radius: 99px;
+      overflow: hidden;
+      margin: 8px 0 4px
+    }
+
+    .xpbar i {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--ok), var(--y));
+      transition: width .5s
+    }
+
+    .pcard small {
+      color: var(--mut)
+    }
+
+    .badges {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 8px
+    }
+
+    .bd {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      background: var(--soft);
+      border: 2px solid var(--line);
+      filter: grayscale(1);
+      opacity: .5
+    }
+
+    .bd.got {
+      filter: none;
+      opacity: 1;
+      border-color: var(--y);
+      background: color-mix(in srgb, var(--y) 25%, var(--panel))
+    }
+
+    .mini {
+      padding: 3px 10px;
+      font-size: 12px;
+      margin-top: 8px;
+      border-bottom-width: 2px;
+      color: var(--mut)
+    }
+
+    .tabs button {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 14px
+    }
+
+    .tabs button i {
+      font-style: normal;
+      display: grid;
+      place-items: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--soft);
+      color: var(--ink);
+      font-size: 12px;
+      border: 2px solid var(--line)
+    }
+
+    .tabs button.on i {
+      background: var(--accink);
+      color: var(--acc);
+      border-color: var(--accink)
+    }
+
+    .tabs button[data-done="1"] i {
+      background: var(--ok);
+      color: var(--bg);
+      border-color: var(--ok)
+    }
+
+    .tabs button[data-done="1"] i::before {
+      content: "\2713"
+    }
+
+    .tabs button[data-done="1"] i {
+      font-size: 0
+    }
+
+    .tabs button[data-done="1"] i::before {
+      font-size: 13px
+    }
+
+    .mission {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: linear-gradient(120deg, color-mix(in srgb, var(--acc) 16%, var(--panel)), color-mix(in srgb, var(--pu) 16%, var(--panel)));
+      border: 2px solid var(--acc);
+      margin-bottom: 14px
+    }
+
+    .mission .mi {
+      font-size: 36px;
+      line-height: 1
+    }
+
+    .mission b {
+      font-family: "Fredoka", sans-serif;
+      font-size: 19px
+    }
+
+    .mission p {
+      margin: 2px 0 0;
+      font-size: 14px;
+      color: var(--mut)
+    }
+
+    .trio {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px
+    }
+
+    @media(max-width:820px) {
+      .trio {
+        grid-template-columns: 1fr
+      }
+    }
+
+    details .trio {
+      margin-bottom: 10px
+    }
+
+    .tb {
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: var(--soft);
+      border: 2px solid var(--line);
+      font-size: 14.5px
+    }
+
+    .tb b {
+      display: block;
+      font-family: "Fredoka", sans-serif;
+      margin-bottom: 2px
+    }
+
+    .tb p {
+      margin: 0
+    }
+
+    .tb.an {
+      border-color: color-mix(in srgb, var(--y) 70%, var(--line));
+      background: color-mix(in srgb, var(--y) 12%, var(--panel))
+    }
+
+    .tb.ex {
+      border-color: color-mix(in srgb, var(--ok) 60%, var(--line));
+      background: color-mix(in srgb, var(--ok) 10%, var(--panel))
+    }
+
+    details.panel summary {
+      font-family: "Fredoka", sans-serif;
+      font-size: 18px
+    }
+
+    #kCards h4 {
+      text-transform: none;
+      font-family: "Fredoka", sans-serif;
+      font-size: 15px;
+      color: var(--ink);
+      letter-spacing: 0
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+      transform: translate(-50%, 40px);
+      opacity: 0;
+      background: var(--ink);
+      color: var(--bg);
+      padding: 10px 18px;
+      border-radius: 99px;
+      font-family: "Fredoka", sans-serif;
+      font-weight: 600;
+      z-index: 50;
+      transition: transform .3s, opacity .3s;
+      pointer-events: none;
+      max-width: 90vw;
+      text-align: center
+    }
+
+    .toast.show {
+      transform: translate(-50%, 0);
+      opacity: 1
+    }
+
+    #aFab {
+      position: fixed;
+      right: calc(16px + env(safe-area-inset-right, 0px));
+      bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+      z-index: 45;
+      display: grid;
+      place-items: center;
+      width: 52px;
+      height: 52px;
+      padding: 0;
+      border-radius: 50%;
+      font-size: 23px;
+      line-height: 1;
+      background: var(--y);
+      color: #3a2a00;
+      border-color: color-mix(in srgb, var(--y) 58%, #000);
+      box-shadow: 0 4px 0 color-mix(in srgb, var(--y) 48%, #000), 0 8px 22px rgba(10, 18, 45, .22);
+      touch-action: manipulation
+    }
+
+    #aFab:hover {
+      transform: translateY(-2px);
+      background: color-mix(in srgb, var(--y) 88%, #fff);
+      border-color: color-mix(in srgb, var(--y) 58%, #000)
+    }
+
+    #aFab:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 color-mix(in srgb, var(--y) 48%, #000)
+    }
+
+    #aFab.off {
+      background: var(--soft);
+      color: var(--mut);
+      border-color: var(--line);
+      box-shadow: 0 4px 0 var(--line), 0 8px 22px rgba(10, 18, 45, .12)
+    }
+
+    #aFab.off:hover {
+      background: var(--panel);
+      border-color: var(--acc)
+    }
+
+    #aFab[hidden] {
+      display: none
+    }
+
+    @media (prefers-reduced-motion:reduce) {
+
+      #aFab,
+      #aFab:hover,
+      #aFab:active {
+        transition: none;
+        transform: none
+      }
+    }
+
+    .ml {
+      list-style: none;
+      margin: 10px 0 0;
+      padding: 0;
+      display: grid;
+      gap: 4px
+    }
+
+    .ml li button {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 22px 1fr auto;
+      gap: 8px;
+      align-items: center;
+      text-align: left;
+      padding: 5px 10px;
+      font-size: 13px;
+      border-bottom-width: 3px
+    }
+
+    .ml li button em {
+      font-style: normal;
+      color: var(--mut);
+      font-size: 12px
+    }
+
+    .ml li.ok button {
+      border-color: var(--ok)
+    }
+
+    .ml li.ok button em {
+      color: var(--ok);
+      font-weight: 700
+    }
+
+    .mprog {
+      margin-top: 8px
+    }
+
+    .mprog .g {
+      font-size: 14px;
+      font-weight: 700
+    }
+
+    .mprog .bar {
+      height: 10px;
+      background: var(--soft);
+      border: 2px solid var(--line);
+      border-radius: 99px;
+      overflow: hidden;
+      margin: 5px 0 3px
+    }
+
+    .mprog .bar i {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--acc), var(--pu));
+      transition: width .4s
+    }
+
+    .mprog.ok .bar i {
+      background: linear-gradient(90deg, var(--ok), var(--y))
+    }
+
+    .mprog small {
+      color: var(--mut);
+      font-size: 13px
+    }
+
+    .mission.ok {
+      border-color: var(--ok)
+    }
+
+    #fx {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 60
+    }
+
+    .mdone {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: calc(16px + env(safe-area-inset-top, 0px)) 16px calc(16px + env(safe-area-inset-bottom, 0px));
+      z-index: 70;
+      background: rgba(10, 12, 30, .6);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .25s, visibility .25s
+    }
+
+    .mdone.show {
+      opacity: 1;
+      visibility: visible
+    }
+
+    .mdone.small {
+      background: transparent;
+      pointer-events: none;
+      place-items: start center;
+      padding-top: 16vh
+    }
+
+    .mdone.small .mcard {
+      pointer-events: auto;
+      cursor: pointer
+    }
+
+    .mcard {
+      background: var(--panel);
+      border: 3px solid var(--y);
+      border-radius: 22px;
+      padding: 20px 24px;
+      text-align: center;
+      width: min(92vw, 420px);
+      max-height: 100%;
+      overflow: auto;
+      box-shadow: 0 8px 0 var(--y), 0 20px 50px rgba(0, 0, 0, .35);
+      transform: scale(.6) rotate(-4deg);
+      transition: transform .5s cubic-bezier(.2, 1.6, .4, 1)
+    }
+
+    .mdone.show .mcard {
+      transform: none
+    }
+
+    .mcard .me {
+      font-size: 64px;
+      line-height: 1;
+      animation: bob 1s ease-in-out infinite
+    }
+
+    .mcard h2 {
+      margin: 6px 0 4px;
+      font-size: 26px;
+      color: var(--acc)
+    }
+
+    .mcard p {
+      margin: 0 0 12px;
+      color: var(--mut)
+    }
+
+    .mdone.big .mcard {
+      width: min(94vw, 480px);
+      box-shadow: 0 8px 0 var(--y), 0 0 60px color-mix(in srgb, var(--y) 70%, transparent)
+    }
+
+    .mdone.big .me {
+      font-size: 84px
+    }
+
+    @keyframes bob {
+
+      0%,
+      100% {
+        transform: translateY(0) scale(1)
+      }
+
+      50% {
+        transform: translateY(-8px) scale(1.08)
+      }
+    }
+
+    .mt {
+      margin-top: 4px
+    }
+
+    .mt h4 {
+      font-family: "Fredoka", sans-serif;
+      font-size: 16px;
+      margin: 8px 0 4px;
+      color: var(--acc)
+    }
+
+    .mt ul {
+      margin: 4px 0 8px;
+      padding-left: 20px
+    }
+
+    .mt table {
+      margin: 6px 0 8px
+    }
+
+    .help {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: calc(12px + env(safe-area-inset-top, 0px)) 12px calc(12px + env(safe-area-inset-bottom, 0px));
+      background: rgba(10, 12, 30, .6);
+      overflow-y: auto;
+      overscroll-behavior: contain
+    }
+
+    .help[hidden] {
+      display: none
+    }
+
+    .hbox {
+      background: var(--panel);
+      border: 3px solid var(--acc);
+      border-radius: 20px;
+      width: min(100%, 720px);
+      max-height: 100%;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 8px 0 var(--line)
+    }
+
+    .hhead {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-bottom: 2px solid var(--line);
+      flex: 0 0 auto
+    }
+
+    .hhead h2 {
+      margin: 0;
+      font-size: 19px;
+      min-width: 0;
+      overflow-wrap: anywhere
+    }
+
+    .hhead button {
+      flex: 0 0 auto
+    }
+
+    .hbody {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      padding: 12px 16px 16px;
+      overflow-wrap: break-word
+    }
+
+    .hbody details {
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      background: var(--soft)
+    }
+
+    .hbody summary {
+      cursor: pointer;
+      font-family: "Fredoka", sans-serif;
+      font-size: 17px;
+      overflow-wrap: anywhere
+    }
+
+    .hbody details[open] summary {
+      margin-bottom: 6px
+    }
+
+    .hbody ol,
+    .hbody ul {
+      margin: 6px 0;
+      padding-left: 22px
+    }
+
+    .hbody p {
+      margin: 6px 0
+    }
+
+    .hbody table {
+      font-size: 14px;
+      max-width: 100%
+    }
+
+    .hl {
+      margin-top: 8px
+    }
+
+    .share {
+      position: fixed;
+      inset: 0;
+      z-index: 85;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: calc(12px + env(safe-area-inset-top, 0px)) 12px calc(12px + env(safe-area-inset-bottom, 0px));
+      background: rgba(10, 12, 30, .7);
+      overflow-y: auto;
+      overscroll-behavior: contain
+    }
+
+    .share[hidden] {
+      display: none
+    }
+
+    .shbox {
+      background: var(--panel);
+      border: 3px solid var(--acc);
+      border-radius: 20px;
+      width: min(100%, 560px);
+      max-height: 100%;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 8px 0 var(--line), 0 20px 50px rgba(0, 0, 0, .35)
+    }
+
+    .shbody {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      padding: 12px 16px;
+      text-align: center
+    }
+
+    .shbody img {
+      display: block;
+      width: 100%;
+      max-width: 420px;
+      height: auto;
+      margin: 0 auto;
+      border-radius: 12px;
+      border: 2px solid var(--line);
+      background: var(--soft)
+    }
+
+    .shfoot {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 12px 16px;
+      border-top: 2px solid var(--line);
+      flex: 0 0 auto
+    }
+
+    .shfoot button {
+      flex: 1 1 180px
+    }
+
+    @media(max-width:560px) {
+      .share {
+        padding: calc(8px + env(safe-area-inset-top, 0px)) 8px calc(8px + env(safe-area-inset-bottom, 0px))
+      }
+
+      .shbox {
+        border-width: 2px;
+        border-radius: 16px
+      }
+
+      .shbody {
+        padding: 10px 12px
+      }
+
+      .shfoot {
+        padding: 10px 12px
+      }
+
+      .shfoot button {
+        flex: 1 1 100%
+      }
+    }
+
+    @media(max-width:560px) {
+      .help {
+        padding: calc(8px + env(safe-area-inset-top, 0px)) 8px calc(8px + env(safe-area-inset-bottom, 0px))
+      }
+
+      .hbox {
+        border-width: 2px;
+        border-radius: 16px
+      }
+
+      .hhead {
+        padding: 10px 12px
+      }
+
+      .hhead h2 {
+        font-size: 16px
+      }
+
+      .hbody {
+        padding: 10px 12px 14px
+      }
+
+      .hbody summary {
+        font-size: 16px
+      }
+
+      .hbody ol,
+      .hbody ul {
+        padding-left: 18px
+      }
+    }
+
+    :root[data-theme="dark"] {
+      color-scheme: dark
+    }
+
+    :root[data-theme="light"] {
+      color-scheme: light
+    }
+
+    main {
+      max-width: 1200px;
+      padding: 24px max(16px, env(safe-area-inset-right)) 56px max(16px, env(safe-area-inset-left))
+    }
+
+    .hero {
+      grid-template-columns: 1fr minmax(260px, 340px);
+      gap: 18px
+    }
+
+    .hero>div:first-child {
+      display: flex;
+      flex-direction: column;
+      gap: 12px
+    }
+
+    .hero .sub {
+      margin: 0;
+      max-width: 62ch;
+      font-size: 17px
+    }
+
+    .hbtns {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    .ml {
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+      margin: 2px 0 0
+    }
+
+    .ml li button {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+      padding: 10px 12px;
+      height: 100%;
+      font-size: 14px;
+      border-bottom-width: 4px;
+      width: 100%
+    }
+
+    .ml li button .e {
+      font-size: 24px;
+      line-height: 1.1
+    }
+
+    .ml li button .n {
+      font-family: "Fredoka", sans-serif;
+      font-weight: 600
+    }
+
+    .ml li button .bar {
+      display: block;
+      width: 100%;
+      height: 7px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      overflow: hidden;
+      margin: 4px 0
+    }
+
+    .ml li button .bar i {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--acc), var(--pu))
+    }
+
+    .ml li.ok button .bar i {
+      background: linear-gradient(90deg, var(--ok), var(--y))
+    }
+
+    .trio {
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr))
+    }
+
+    #v-kuis>.panel {
+      max-width: 860px;
+      margin-inline: auto
+    }
+
+    .nextm {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+      padding: 14px 16px;
+      border: 2px solid var(--ok);
+      border-radius: 16px;
+      background: color-mix(in srgb, var(--ok) 12%, var(--panel));
+      animation: nxin .5s
+    }
+
+    .nextm.hide {
+      display: none
+    }
+
+    .nextm b {
+      font-family: "Fredoka", sans-serif;
+      font-size: 18px
+    }
+
+    .nextm p {
+      margin: 2px 0 0;
+      color: var(--mut)
+    }
+
+    .nextm button {
+      font-size: 16px;
+      padding: 10px 18px
+    }
+
+    @keyframes nxin {
+      from {
+        transform: translateY(14px);
+        opacity: 0
+      }
+
+      to {
+        transform: none;
+        opacity: 1
+      }
+    }
+
+    html {
+      scroll-padding-top: 90px;
+      scroll-behavior: smooth
+    }
+
+    main.content {
+      max-width: none;
+      margin: 0;
+      padding: 0;
+      min-width: 0
+    }
+
+    .navbar {
+      position: sticky;
+      top: env(safe-area-inset-top, 0px);
+      z-index: 40;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 12px max(20px, env(safe-area-inset-right)) 12px max(20px, env(safe-area-inset-left));
+      background: var(--panel);
+      border-bottom: 2px solid var(--line);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, .04)
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0 0 auto;
+      height: env(safe-area-inset-top, 0px);
+      z-index: 41;
+      background: var(--panel)
+    }
+
+    .navbar h1 {
+      font-size: clamp(20px, 3vw, 26px);
+      margin: 0;
+      letter-spacing: -.02em;
+      color: var(--acc);
+      background: linear-gradient(90deg, var(--acc), var(--pu));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end
+    }
+
+    .nav-actions button {
+      padding: 7px 14px;
+      font-size: 14px;
+      background: var(--bg);
+      color: var(--ink)
+    }
+
+    .hero-section {
+      max-width: 1200px;
+      margin: 24px auto 16px;
+      padding: 0 max(20px, env(safe-area-inset-left));
+      text-align: center
+    }
+
+    .hero-section h2 {
+      font-size: clamp(24px, 5vw, 36px);
+      margin: 0 0 8px
+    }
+
+    .hero-section p {
+      font-size: 17px;
+      color: var(--mut);
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6
+    }
+
+    .tabs-container {
+      max-width: 1200px;
+      margin: 0 auto 20px;
+      padding: 0 max(20px, env(safe-area-inset-left))
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 0
+    }
+
+    .app-layout {
+      display: grid;
+      grid-template-columns: 300px minmax(0, 1fr);
+      gap: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 max(20px, env(safe-area-inset-right)) 48px max(20px, env(safe-area-inset-left));
+      align-items: start
+    }
+
+    .sidebar {
+      position: sticky;
+      top: calc(84px + env(safe-area-inset-top, 0px));
+      max-height: calc(100vh - 100px);
+      overflow: auto
+    }
+
+    @media(max-width:860px) {
+      .app-layout {
+        grid-template-columns: 1fr
+      }
+
+      .sidebar {
+        position: static;
+        max-height: none;
+        overflow: visible
+      }
+    }
+
+    .side-panel {
+      padding: 18px;
+      margin-bottom: 0
+    }
+
+    .side-panel small {
+      color: var(--mut)
+    }
+
+    .pname {
+      margin-top: 12px
+    }
+
+    .pname label {
+      display: block;
+      font-size: 11px;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+      color: var(--mut);
+      margin-bottom: 4px
+    }
+
+    .pname input {
+      display: block;
+      width: 100%;
+      flex: none;
+      font-size: 14px;
+      padding: 7px 10px
+    }
+
+    .sh {
+      margin-top: 18px;
+      font-weight: 700;
+      font-size: 15px;
+      font-family: "Fredoka", sans-serif
+    }
+
+    .sbtn {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px
+    }
+
+    .sbtn .mini {
+      width: 100%;
+      margin: 0;
+      padding: 8px 12px;
+      font-size: 13px
+    }
+
+    #pReset {
+      color: var(--bad);
+      border-color: var(--bad);
+      background: transparent
+    }
+
+    #pFxBtn {
+      background: var(--ok);
+      color: var(--bg);
+      border-color: var(--ok)
+    }
+
+    .ml {
+      grid-template-columns: 1fr;
+      gap: 6px;
+      margin: 8px 0 0
+    }
+
+    .ml li button {
+      display: grid;
+      grid-template-columns: 24px 1fr auto;
+      gap: 8px;
+      align-items: center;
+      text-align: left;
+      padding: 8px 12px;
+      font-size: 14px;
+      border: 2px solid transparent;
+      background: transparent;
+      border-radius: 8px;
+      width: 100%;
+      height: auto;
+      box-shadow: none
+    }
+
+    .ml li button:hover {
+      background: var(--soft);
+      transform: none
+    }
+
+    .ml li button em {
+      font-style: normal;
+      color: var(--mut);
+      font-size: 12px
+    }
+
+    .ml li.ok button {
+      border-color: var(--ok);
+      background: color-mix(in srgb, var(--ok) 10%, transparent)
+    }
+
+    .ml li.ok button em {
+      color: var(--ok);
+      font-weight: 700
+    }
+
+    @media (prefers-reduced-motion:reduce) {
+      .nextm {
+        animation: none
+      }
+
+      #pk,
+      .xpbar i,
+      .toast,
+      .mcard,
+      .mprog .bar i {
+        transition: none !important
+      }
+
+      .mcard .me {
+        animation: none
+      }
+    }
+
+    /* ==== Penyesuaian layar kecil (paling akhir agar menang) ==== */
+    @media(max-width:560px) {
+      .mcard {
+        padding: 16px
+      }
+
+      .mcard h2 {
+        font-size: 22px
+      }
+
+      .mcard .me {
+        font-size: 52px
+      }
+
+      .navbar {
+        padding-left: 12px;
+        padding-right: 12px;
+        flex-wrap: wrap
+      }
+
+      .navbar>div:first-child {
+        flex: 1 1 100%
+      }
+
+      .nav-actions {
+        justify-content: flex-start;
+        width: 100%
+      }
+
+      .nav-actions button {
+        flex: 1 1 auto;
+        padding: 7px 10px;
+        font-size: 13px
+      }
+
+      .tabs {
+        gap: 6px;
+        justify-content: flex-start
+      }
+
+      .tabs button {
+        padding: 8px 10px;
+        font-size: 13px
+      }
+
+      .hero-section {
+        margin-top: 18px;
+        padding: 0 14px
+      }
+
+      .tabs-container {
+        padding: 0 14px
+      }
+
+      .app-layout {
+        padding-left: 14px;
+        padding-right: 14px;
+        gap: 18px
+      }
+
+      .trio {
+        grid-template-columns: 1fr
+      }
+
+      .stats {
+        gap: 6px
+      }
+
+      .stats div {
+        padding: 8px
+      }
+
+      .stats b {
+        font-size: 20px
+      }
+
+      .fld {
+        grid-template-columns: 1fr;
+        gap: 3px;
+        margin-bottom: 10px
+      }
+
+      .mission {
+        align-items: flex-start
+      }
+
+      .mission .mi {
+        font-size: 28px
+      }
+    }
+
+    @media(max-width:380px) {
+      .stats {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .stats div:last-child {
+        grid-column: 1/-1
+      }
+
+      .nav-actions {
+        flex-direction: column
+      }
+
+      .nav-actions button {
+        width: 100%
+      }
+
+      .panel {
+        padding: 12px
+      }
+
+      .side-panel {
+        padding: 14px
+      }
+    }
+
+    @media(max-height:480px) {
+      .mdone {
+        padding-top: calc(10px + env(safe-area-inset-top, 0px));
+        padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px))
+      }
+
+      .mdone.small {
+        padding-top: 10vh
+      }
+    }
+  </style>
+  <script>try {var _t = localStorage.getItem("netlab_theme"); if (_t) document.documentElement.setAttribute("data-theme", _t)} catch (e) { }</script>
+</head>
+
+<body>
+  <nav class="navbar" aria-label="Menu utama">
+    <div>
+      <h1>NetLab Quest</h1>
+    </div>
+    <div class="nav-actions"><button id="hBtn">❓ Panduan</button><button id="tBtn" aria-pressed="false">🌙 Mode
+        gelap</button></div>
+  </nav>
+  <header class="hero-section">
+    <h2>Belajar Jaringan Komputer Interaktif</h2>
+    <p>Selamat datang! Di sini kamu belajar dasar jaringan komputer, menguji topologi, memahami alamat IPv4 (Kelas A, B,
+      C), dan melihat langsung bagaimana data dibungkus lewat TCP/IP. Selesaikan 5 misi, kumpulkan XP dan lencana, lalu
+      jadi <b>Master Jaringan</b>!</p>
+  </header>
+  <div class="tabs-container">
+    <nav class="tabs" id="tabs" aria-label="Pilih misi">
+      <button data-t="materi" class="on"><i>1</i>📚 Materi</button>
+      <button data-t="topo"><i>2</i>🕸️ Topologi</button>
+      <button data-t="kip"><i>3</i>🔌 Simulasi IP</button>
+      <button data-t="pj"><i>4</i>📦 Packet Journey</button>
+      <button data-t="kuis"><i>5</i>📝 Kuis</button>
+    </nav>
+  </div>
+  <div class="app-layout">
+    <aside class="sidebar" aria-label="Profil dan progres">
+      <div class="panel side-panel">
+        <div class="plv"><span id="pLv">Lv 1</span><b id="pTitle">Pemula</b></div>
+        <div class="xpbar" role="progressbar" aria-label="Progres XP"><i id="pBar"></i></div><small id="pXp">0
+          XP</small>
+        <div class="pname"><label for="pName">Nama di gambar bagikan</label><input type="text" id="pName" maxlength="24"
+            placeholder="Tulis namamu" autocomplete="name"></div>
+        <div class="sh">Koleksi lencana</div>
+        <div class="badges" id="pBadges"></div>
+        <div class="sh">Status misi</div>
+        <ol class="ml" id="pMs" aria-label="Daftar misi"></ol>
+        <div class="sbtn"><button class="mini" id="pShare">📤 Bagikan hasil</button><button class="mini" id="pFxBtn"
+            hidden>🎊 Putar perayaan</button><button class="mini" id="pReset">Reset progres</button></div>
+      </div>
+    </aside>
+    <main class="content">
+
+      <!-- ======================= MATERI ======================= -->
+      <div id="v-materi">
+        <div class="mission"><span class="mi">📚</span>
+          <div><b>Misi 1: Kuasai dasar-dasar jaringan</b>
+            <p>Buka kartu materi di bawah. Tiap kartu berisi teori singkat, analogi, dan contoh. Setiap kartu yang kamu
+              buka memberi XP!</p>
+          </div>
+        </div>
+
+        <details class="panel">
+          <summary>🌐 A. Apa itu jaringan komputer?</summary>
+          <div class="trio">
+            <div class="tb"><b>📖 Intinya</b>
+              <p>Jaringan komputer adalah kumpulan perangkat (komputer, ponsel, printer) yang saling terhubung untuk
+                berbagi data dan sumber daya. Jenisnya dibedakan dari luas cakupannya.</p>
+            </div>
+            <div class="tb an"><b>🛣️ Analogi</b>
+              <p>Seperti sistem jalan: gang kecil (PAN), jalan kampung (LAN), jalan kota (MAN), jalan tol antar kota
+                (WAN), dan jalan seluruh dunia (Internet).</p>
+            </div>
+            <div class="tb ex"><b>💡 Contoh</b>
+              <p>Ponsel dengan earphone Bluetooth itu PAN. Wi-Fi lab komputer sekolah itu LAN. Jaringan satu ISP di satu
+                kota itu MAN.</p>
+            </div>
+          </div>
+          <div class="mt">
+            <h4>📌 Materi ringkas</h4>
+            <ul>
+              <li><b>Pengertian:</b> jaringan komputer adalah perangkat komputer atau perangkat TIK lain yang saling
+                terhubung untuk berbagi sumber daya, baik data maupun informasi.</li>
+              <li><b>Manfaat:</b> berbagi file dan printer, berbagi koneksi internet, serta mempermudah komunikasi.</li>
+              <li><b>Catatan:</b> komputer dalam satu jaringan boleh punya spesifikasi, sistem operasi, atau aplikasi
+                yang berbeda-beda.</li>
+              <li><b>Klasifikasi berdasarkan area:</b> PAN, LAN, MAN, WAN, dan Internet (lihat tabel).</li>
+            </ul>
+          </div>
+          <div class="scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Jenis</th>
+                  <th>Cakupan</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>PAN</td>
+                  <td>Jarak pribadi: komputer dengan headphone, printer, ponsel. Versi nirkabelnya disebut WPAN.</td>
+                </tr>
+                <tr>
+                  <td>LAN</td>
+                  <td>Satu gedung: sekolah, kantor, warnet, atau laboratorium.</td>
+                </tr>
+                <tr>
+                  <td>MAN</td>
+                  <td>Satu kota dan sekitarnya, misalnya jaringan relay ISP.</td>
+                </tr>
+                <tr>
+                  <td>WAN</td>
+                  <td>Antar kota atau negara. Butuh router untuk menghubungkan sub jaringan.</td>
+                </tr>
+                <tr>
+                  <td>Internet</td>
+                  <td>Gabungan banyak LAN dan WAN di seluruh dunia, umumnya memakai TCP/IP.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </details>
+
+        <details class="panel">
+          <summary>🕸️ B. Topologi jaringan</summary>
+          <div class="trio">
+            <div class="tb"><b>📖 Intinya</b>
+              <p>Topologi adalah cara menyambungkan komputer satu dengan yang lain: bus, ring, star, mesh, dan hybrid.
+                Tidak ada yang terbaik untuk semua keadaan. Pilih sesuai kebutuhan dan anggaran.</p>
+            </div>
+            <div class="tb an"><b>🏘️ Analogi</b>
+              <p>Seperti denah jalan perumahan. Bus: satu jalan utama. Ring: jalan lingkar. Star: semua jalan menuju
+                satu bundaran. Mesh: tiap rumah punya jalan langsung ke semua rumah.</p>
+            </div>
+            <div class="tb ex"><b>💡 Contoh</b>
+              <p>Lab sekolah biasanya memakai star dengan switch di tengah. Kalau switch mati, semua PC ikut putus.
+                Buktikan di Misi 2!</p>
+            </div>
+          </div>
+          <div class="mt">
+            <h4>📌 Materi ringkas</h4>
+            <ul>
+              <li><b>Pengertian:</b> topologi adalah struktur atau arsitektur fisik, yaitu cara menyambungkan satu
+                komputer dengan komputer lain. Pilihan topologi memengaruhi kecepatan dan efisiensi komunikasi.</li>
+              <li><b>Memilih topologi:</b> tidak ada yang terbaik untuk semua situasi. Pertimbangkan kebutuhan, biaya
+                atau anggaran, dan skalabilitas.</li>
+            </ul>
+            <div class="scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Topologi</th>
+                    <th>Ciri</th>
+                    <th>Kelebihan</th>
+                    <th>Kekurangan</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Bus</td>
+                    <td>Semua komputer terhubung ke satu jalur data (kabel) yang dipakai bersama</td>
+                    <td>Hemat kabel, mudah dipasang</td>
+                    <td>Kabel utama putus, seluruh jaringan terganggu</td>
+                  </tr>
+                  <tr>
+                    <td>Ring</td>
+                    <td>Komputer dihubungkan berantai membentuk cincin. Data berputar mengelilingi jaringan</td>
+                    <td>Aliran data teratur</td>
+                    <td>Satu titik rusak dapat mengganggu perputaran</td>
+                  </tr>
+                  <tr>
+                    <td>Star</td>
+                    <td>Semua komputer (client dan server) terhubung ke konsentrator (hub atau switch) lewat jalur
+                      masing-masing</td>
+                    <td>Mudah dikelola, satu PC rusak tidak mengganggu yang lain</td>
+                    <td>Bergantung pada hub atau switch pusat</td>
+                  </tr>
+                  <tr>
+                    <td>Mesh</td>
+                    <td>Semua komputer terhubung langsung (point to point). Lima komputer berarti tiap komputer punya 4
+                      jalur</td>
+                    <td>Sangat andal, perlindungan berlapis</td>
+                    <td>Kabel banyak dan mahal</td>
+                  </tr>
+                  <tr>
+                    <td>Hybrid / Tree</td>
+                    <td>Gabungan beberapa topologi, dihubungkan oleh jalur utama (bus) antar jaringan lokal</td>
+                    <td>Fleksibel dan mudah dikembangkan</td>
+                    <td>Perancangan lebih rumit dan mahal</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <button class="go" data-t="topo">Coba matikan perangkat di Simulasi Topologi</button>
+        </details>
+
+        <details class="panel">
+          <summary>🧱 C. Persiapan membangun jaringan</summary>
+          <div class="trio">
+            <div class="tb"><b>📖 Intinya</b>
+              <p>Sebelum membangun, lakukan analisis kebutuhan dan sesuaikan dengan biaya. Setelah jadi, jaringan perlu
+                dikelola dan dirawat.</p>
+            </div>
+            <div class="tb an"><b>🏠 Analogi</b>
+              <p>Seperti membangun rumah: hitung butuh berapa kamar, sesuaikan dengan dana, lalu rawat atapnya supaya
+                tidak bocor.</p>
+            </div>
+            <div class="tb ex"><b>💡 Contoh</b>
+              <p>Lab 40 PC butuh switch dengan port cukup, kabel UTP, dan jadwal cek kabel tiap semester.</p>
+            </div>
+          </div>
+          <div class="mt">
+            <h4>📌 Materi ringkas</h4>
+            <ul>
+              <li><b>Aspek teknis:</b> kondisi yang berkaitan dengan pengerjaan jaringan, mulai dari <i>sebelum</i>,
+                <i>sedang</i>, dan <i>setelah</i> jaringan dibangun.
+              </li>
+              <li><b>Analisis kebutuhan:</b> tentukan dulu sejauh dan sebesar apa jaringan yang dibutuhkan.</li>
+              <li><b>Biaya:</b> sesuaikan dengan ketersediaan anggaran supaya biaya dan kebutuhan tepat.</li>
+              <li><b>Pengelolaan dan pemeliharaan:</b> aspek terakhir agar jaringan bertahan lama dan terhindar dari
+                kerusakan yang membuatnya tidak berfungsi.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="panel">
+          <summary>📦 D. Lapisan informasi: OSI dan TCP/IP</summary>
+          <div class="trio">
+            <div class="tb"><b>📖 Intinya</b>
+              <p>Data dibungkus berlapis-lapis sebelum dikirim (enkapsulasi). Model OSI punya 7 lapisan, model TCP/IP
+                lebih sederhana dengan 4 lapisan.</p>
+            </div>
+            <div class="tb an"><b>🚚 Analogi</b>
+              <p>Seperti kurir paket: barang dibungkus kardus, ditempel alamat tujuan, lalu diangkut truk lewat jalan.
+              </p>
+            </div>
+            <div class="tb ex"><b>💡 Contoh</b>
+              <p>Saat buka web: HTTP meminta halaman, TCP menjaga data utuh dan berurutan, IP menentukan alamat tujuan,
+                Wi-Fi atau kabel jadi jalannya.</p>
+            </div>
+          </div>
+          <div class="mt">
+            <h4>📌 Materi ringkas</h4>
+            <ul>
+              <li><b>OSI (Open System Interconnection):</b> standar ISO tahun 1977 supaya perangkat berbagai vendor bisa
+                saling berkomunikasi. Punya 7 lapisan dan tiap lapisan berkomunikasi dengan lapisan lain berdasarkan
+                protokol dan standar.</li>
+              <li><b>TCP/IP:</b> standar komunikasi data yang dikembangkan DARPA, lebih sederhana dengan 4 lapisan:
+                Network Access, Internet, Transport, dan Application.</li>
+            </ul>
+            <div class="scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Lapisan OSI</th>
+                    <th>Tugas</th>
+                    <th>Satuan data</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>7. Application</td>
+                    <td>Menghubungkan proses jaringan ke aplikasi</td>
+                    <td>Data</td>
+                  </tr>
+                  <tr>
+                    <td>6. Presentation</td>
+                    <td>Representasi data dan enkripsi</td>
+                    <td>Data</td>
+                  </tr>
+                  <tr>
+                    <td>5. Session</td>
+                    <td>Komunikasi antar-host</td>
+                    <td>Data</td>
+                  </tr>
+                  <tr>
+                    <td>4. Transport</td>
+                    <td>Koneksi ujung ke ujung dan keandalan</td>
+                    <td>Segment</td>
+                  </tr>
+                  <tr>
+                    <td>3. Network</td>
+                    <td>Penentuan jalur dan alamat logis (IP)</td>
+                    <td>Packet</td>
+                  </tr>
+                  <tr>
+                    <td>2. Data Link</td>
+                    <td>MAC address dan akses media</td>
+                    <td>Frame</td>
+                  </tr>
+                  <tr>
+                    <td>1. Physical</td>
+                    <td>Transmisi sinyal dan bit lewat media</td>
+                    <td>Bit</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>OSI (7 lapisan)</th>
+                  <th>TCP/IP (4 lapisan)</th>
+                  <th>Contoh protokol</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Application, Presentation, Session</td>
+                  <td>Application</td>
+                  <td>HTTP, DNS, FTP, SMTP</td>
+                </tr>
+                <tr>
+                  <td>Transport</td>
+                  <td>Transport</td>
+                  <td>TCP, UDP</td>
+                </tr>
+                <tr>
+                  <td>Network</td>
+                  <td>Internet</td>
+                  <td>IP, ARP, ICMP</td>
+                </tr>
+                <tr>
+                  <td>Data Link, Physical</td>
+                  <td>Network Access</td>
+                  <td>Ethernet, Wi-Fi</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <button class="go" data-t="pj" style="margin-top:10px">Lihat paket dibungkus di Packet Journey</button>
+        </details>
+
+        <details class="panel">
+          <summary>🏷️ E. Alamat IP, subnet mask, gateway, dan kelas IP</summary>
+          <div class="trio">
+            <div class="tb"><b>📖 Intinya</b>
+              <p>Alamat IP adalah alamat unik perangkat. Subnet mask memisahkan ID jaringan dan ID host. Gateway adalah
+                pintu keluar ke jaringan lain. IP dibagi ke kelas A sampai E.</p>
+            </div>
+            <div class="tb an"><b>🏠 Analogi</b>
+              <p>Alamat rumah: nama gang itu ID jaringan, nomor rumah itu ID host, gerbang kompleks itu gateway
+                (router). Kelas IP seperti ukuran baju S, M, L.</p>
+            </div>
+            <div class="tb ex"><b>💡 Contoh</b>
+              <p>192.168.1.10 dengan mask 255.255.255.0 adalah Kelas C, gangnya 192.168.1.0, rumah nomor 10. Ke
+                192.168.1.20 (satu gang) kirim langsung. Ke 192.168.2.20 (beda gang) harus lewat router.</p>
+            </div>
+          </div>
+          <div class="mt">
+            <h4>📌 Materi ringkas</h4>
+            <ul>
+              <li><b>Alamat IP:</b> alamat unik tiap perangkat di jaringan, misalnya 192.168.10.5.</li>
+              <li><b>Subnet mask:</b> menandai bagian IP yang menjadi ID jaringan dan bagian yang menjadi ID host. Pada
+                255.255.255.0, tiga angka pertama adalah ID jaringan.</li>
+              <li><b>Default gateway:</b> alamat router sebagai pintu keluar ke jaringan lain.</li>
+              <li><b>Aturan kirim:</b> ID jaringan sama berarti kirim langsung lewat switch. ID jaringan beda berarti
+                lewat gateway ke router.</li>
+              <li><b>Kelas IP:</b> A (oktet pertama 1 sampai 126, mask 255.0.0.0), B (128 sampai 191, mask 255.255.0.0),
+                C (192 sampai 223, mask 255.255.255.0), D (224 sampai 239, multicast), E (240 sampai 255, cadangan).
+              </li>
+              <li><b>Aturan host:</b> ID host semua 0 adalah alamat jaringan, semua 1 adalah alamat broadcast. Keduanya
+                tidak boleh dipakai komputer.</li>
+            </ul>
+          </div>
+          <button class="go" data-t="kip">Coba di Simulasi IP</button>
+        </details>
+
+        <details class="panel">
+          <summary>🔌 F. Komponen jaringan komputer</summary>
+          <div class="trio">
+            <div class="tb"><b>📖 Intinya</b>
+              <p>Perangkat keras: NIC atau Wireless LAN card, hub dan switch, repeater, bridge, router, access point,
+                modem, kabel UTP, konektor RJ45, tang crimping, dan LAN tester. Perangkat lunak: sistem operasi, driver,
+                dan browser.</p>
+            </div>
+            <div class="tb an"><b>🏙️ Analogi</b>
+              <p>NIC itu pintu rumah, switch itu terminal bus, router itu petugas pos antar kota, modem itu gerbang tol
+                ke internet, access point itu pemancar radio, repeater itu pengeras suara.</p>
+            </div>
+            <div class="tb ex"><b>💡 Contoh</b>
+              <p>Di kamar kos: modem dari ISP, router Wi-Fi (sekaligus access point dan switch kecil), dan laptop dengan
+                Wireless LAN card.</p>
+            </div>
+          </div>
+          <div class="mt">
+            <h4>📌 Materi ringkas</h4>
+            <p style="margin:0 0 6px"><b>Perangkat keras</b></p>
+            <div class="scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Komponen</th>
+                    <th>Fungsi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>NIC (Network Interface Card)</td>
+                    <td>Menghubungkan komputer ke jaringan lewat kabel</td>
+                  </tr>
+                  <tr>
+                    <td>Wireless LAN card</td>
+                    <td>Menghubungkan komputer ke jaringan nirkabel (WLAN). Laptop umumnya sudah punya</td>
+                  </tr>
+                  <tr>
+                    <td>Hub</td>
+                    <td>Menghubungkan workstation, server, atau perangkat lain lewat kabel. Fungsinya kini umumnya ada
+                      di switch</td>
+                  </tr>
+                  <tr>
+                    <td>Switch</td>
+                    <td>Menghubungkan komputer atau router dalam satu area jaringan</td>
+                  </tr>
+                  <tr>
+                    <td>Repeater</td>
+                    <td>Memperkuat sinyal karena keterbatasan media transmisi</td>
+                  </tr>
+                  <tr>
+                    <td>Bridge</td>
+                    <td>Menghubungkan antar jaringan dan mengendalikan informasi di kedua sisi</td>
+                  </tr>
+                  <tr>
+                    <td>Router</td>
+                    <td>Menerjemahkan informasi antar jaringan dan mencari jalur terbaik. Menghubungkan jaringan ke
+                      internet</td>
+                  </tr>
+                  <tr>
+                    <td>Access point</td>
+                    <td>Mengonversi sinyal radio menjadi sinyal digital dan sebaliknya, untuk menghubungkan perangkat
+                      nirkabel</td>
+                  </tr>
+                  <tr>
+                    <td>Modem</td>
+                    <td>Mengubah sinyal digital menjadi analog sebelum dikirim ke internet dan sebaliknya</td>
+                  </tr>
+                  <tr>
+                    <td>Kabel UTP dan konektor RJ45</td>
+                    <td>Mengalirkan data antar perangkat. RJ45 dipasang di ujung kabel UTP</td>
+                  </tr>
+                  <tr>
+                    <td>Tang crimping dan LAN tester</td>
+                    <td>Memasang konektor RJ45 dan menguji kabel hasil crimping</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p style="margin:10px 0 6px"><b>Perangkat lunak</b></p>
+            <ul>
+              <li><b>Sistem operasi:</b> mengelola perangkat keras dan sumber daya, serta menyiapkan infrastruktur untuk
+                program.</li>
+              <li><b>Driver:</b> program yang membuat perangkat keras dikenali dan bisa dipakai sistem operasi.</li>
+              <li><b>Web browser:</b> aplikasi untuk melihat konten di World Wide Web, misalnya Chrome, Edge, Safari,
+                Firefox, dan Opera.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="panel">
+          <summary>📡 G. Mekanisme pertukaran data</summary>
+          <div class="trio">
+            <div class="tb"><b>📖 Intinya</b>
+              <p>Arah komunikasi ada simplex, half duplex, dan full duplex. Media bisa kabel (coaxial, UTP, fiber optik)
+                atau nirkabel (Bluetooth, Wi-Fi). Kabel UTP bisa straight-through atau cross-over.</p>
+            </div>
+            <div class="tb an"><b>📻 Analogi</b>
+              <p>Simplex seperti siaran radio, half duplex seperti walkie-talkie (gantian bicara), full duplex seperti
+                telepon. Fiber optik itu jalan tol untuk cahaya.</p>
+            </div>
+            <div class="tb ex"><b>💡 Contoh</b>
+              <p>PC ke switch pakai straight-through (T568A ke T568A). Laptop ke laptop langsung pakai cross-over (T568A
+                ke T568B).</p>
+            </div>
+          </div>
+          <div class="mt">
+            <h4>📌 Materi ringkas</h4>
+            <ul>
+              <li><b>Transmisi data:</b> proses berbagi atau bertukar data antar dua objek, alat, atau sistem, misalnya
+                saat mengirim email atau membuka web.</li>
+              <li><b>Simplex:</b> satu arah saja. <b>Half duplex:</b> dua arah tetapi bergantian. <b>Full duplex:</b>
+                dua arah bersamaan, contohnya telepon.</li>
+            </ul>
+            <div class="scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Media</th>
+                    <th>Ciri</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Kabel coaxial</td>
+                    <td>Tembaga: kabel inti di tengah dilapisi isolator dan serabut. Konektor BNC</td>
+                  </tr>
+                  <tr>
+                    <td>Kabel UTP</td>
+                    <td>Banyak dipakai di LAN, kabel terisolasi dipilin berpasangan. Kategori Cat1 sampai Cat7. Konektor
+                      RJ45</td>
+                  </tr>
+                  <tr>
+                    <td>Fiber optik</td>
+                    <td>Mengirim cahaya lewat serat optik. Jangkauan ratusan kilometer, tahan gangguan elektromagnetik,
+                      paling cepat</td>
+                  </tr>
+                  <tr>
+                    <td>Nirkabel</td>
+                    <td>Tanpa kabel, misalnya Bluetooth (jaringan pribadi, jarak dekat) dan Wi-Fi</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <ul>
+              <li><b>Straight-through:</b> kedua ujung T568A ke T568A (atau B ke B), untuk perangkat berbeda jenis.</li>
+              <li><b>Cross-over:</b> T568A ke T568B, untuk menghubungkan dua perangkat sejenis seperti laptop ke laptop.
+              </li>
+              <li><b>Menguji kabel:</b> pasang kedua konektor ke LAN tester. Jika semua lampu menyala berurutan, kabel
+                berfungsi baik.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="panel">
+          <summary>🛡️ H. Keamanan jaringan dan tata kelola data</summary>
+          <div class="trio">
+            <div class="tb"><b>📖 Intinya</b>
+              <p>Cyber security melindungi data dari serangan. Autentikasi membuktikan identitas, otorisasi menentukan
+                hak akses, kontrol akses mengatur izin berdasarkan peran, firewall menyaring lalu lintas, enkripsi
+                mengacak pesan.</p>
+            </div>
+            <div class="tb an"><b>🏫 Analogi</b>
+              <p>Seperti gedung sekolah: satpam cek kartu pelajar (autentikasi), kartu menentukan ruang yang boleh
+                dimasuki (otorisasi), pagar dan gerbang (firewall), surat bersandi rahasia (enkripsi).</p>
+            </div>
+            <div class="tb ex"><b>💡 Contoh</b>
+              <p>Login ke aplikasi sekolah dengan kata sandi itu autentikasi. Siswa hanya bisa melihat nilainya sendiri
+                itu otorisasi. Hindari Wi-Fi asing untuk m-banking karena rentan penyadapan (man-in-the-middle).</p>
+            </div>
+          </div>
+          <div class="mt">
+            <h4>📌 Materi ringkas</h4>
+            <ul>
+              <li><b>Cyber security:</b> upaya melindungi keamanan data dan informasi dari berbagai serangan atau
+                gangguan.</li>
+              <li><b>Pencegahan:</b> hindari Wi-Fi asing (rentan serangan man-in-the-middle) dan waspada email tidak
+                dikenal (bisa membawa malware).</li>
+              <li><b>Tata kelola data:</b> sekumpulan proses, kebijakan, peran, dan standar agar data efektif dan
+                efisien dipakai, mudah diakses, dan akurat.</li>
+            </ul>
+            <div class="scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Tata kelola akses</th>
+                    <th>Penjelasan</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Autentikasi</td>
+                    <td>Membuktikan identitas pengguna, misalnya dengan ID dan kata sandi</td>
+                  </tr>
+                  <tr>
+                    <td>Otorisasi</td>
+                    <td>Menentukan operasi yang boleh dilakukan: hanya membaca, mengubah, atau menghapus</td>
+                  </tr>
+                  <tr>
+                    <td>Kontrol akses</td>
+                    <td>Administrator menetapkan izin berdasarkan peran atau identitas pengguna</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <ul>
+              <li><b>Firewall:</b> penyaring lalu lintas antara jaringan lokal dan jaringan luar.</li>
+              <li><b>Enkripsi:</b> bagian dari kriptografi untuk menjamin kerahasiaan (privacy), mendukung autentikasi,
+                dan menjaga integritas pesan agar tidak diubah pihak tidak sah.</li>
+            </ul>
+          </div>
+        </details>
+      </div>
+
+      <!-- ======================= TOPOLOGI ======================= -->
+      <div id="v-topo" class="hide">
+        <div class="mission"><span class="mi">🔧</span>
+          <div><b>Misi 2: Jadi montir jaringan</b>
+            <p>Matikan satu perangkat, lalu lihat siapa yang masih terhubung. Setiap topologi punya titik lemah. Uji 3
+              topologi untuk dapat lencana!</p>
+          </div>
+        </div>
+        <details class="panel" open>
+          <summary>💡 Teori singkat, analogi, dan contoh</summary>
+          <div class="trio">
+            <div class="tb"><b>📖 Intinya</b>
+              <p>Topologi adalah cara menyambungkan komputer. Ketahanannya berbeda-beda saat ada perangkat yang rusak.
+              </p>
+            </div>
+            <div class="tb an"><b>🧩 Analogi</b>
+              <p>Seperti jalan di kompleks. Kalau bundaran pusat (star) ditutup, semua rumah terisolasi. Kalau ada
+                banyak jalan alternatif (mesh), tetap bisa lewat.</p>
+            </div>
+            <div class="tb ex"><b>💡 Contoh</b>
+              <p>Matikan Switch pada Star: semua PC putus. Matikan satu PC pada Mesh: PC lain tetap saling terhubung.
+              </p>
+            </div>
+          </div>
+        </details>
+        <section class="panel">
+          <div class="row" id="tpBtns"></div>
+          <p class="note">Klik pada salah satu perangkat komputer atau kabel utama untuk memutus koneksinya (simulasi
+            kerusakan). Klik lagi untuk menyambungkannya.</p>
+          <svg viewBox="0 0 720 260" id="tpSvg" role="img" aria-label="Diagram topologi jaringan"></svg>
+          <div class="stepbox" id="tpRes"></div>
+          <div class="stats">
+            <div><b id="tpK">0</b><small>Jumlah kabel</small></div>
+            <div><b id="tpC">0</b><small>Perangkat terhubung</small></div>
+            <div><b id="tpF">0</b><small>Perangkat terputus</small></div>
+          </div>
+        </section>
+        <div class="two">
+          <section class="panel">
+            <h2>Kelebihan</h2>
+            <ul id="tpPro"></ul>
+          </section>
+          <section class="panel">
+            <h2>Kekurangan</h2>
+            <ul id="tpCon"></ul>
+          </section>
+        </div>
+      </div>
+
+      <!-- ======================= SIMULASI IP (KELAS IPv4) ======================= -->
+      <div id="v-kip" class="hide">
+        <div class="mission"><span class="mi">🕵️</span>
+          <div><b>Misi 3: Jadi detektif IP</b>
+            <p>Dua komputer ingin saling kirim pesan. Bisakah mereka terhubung? Tebak dulu, lalu cari tahu alasannya.
+              Tebakan benar memberi XP besar!</p>
+          </div>
+        </div>
+
+        <section class="panel">
+          <h2>Pembagian kelas alamat IPv4</h2>
+          <details class="panel" open>
+            <summary>💡 Teori singkat, analogi, dan contoh</summary>
+            <div class="trio">
+              <div class="tb"><b>📖 Intinya</b>
+                <p>Alamat IPv4 dibagi ke kelas A sampai E menurut oktet pertamanya. Subnet mask menunjukkan bagian ID
+                  jaringan. Komputer yang ID jaringannya sama bisa langsung berkomunikasi lewat switch.</p>
+              </div>
+              <div class="tb an"><b>🧩 Analogi</b>
+                <p>Seperti ukuran baju S, M, L. Kelas A untuk jaringan raksasa, B menengah, C untuk jaringan lokal. ID
+                  jaringan itu nama gang, ID host itu nomor rumah.</p>
+              </div>
+              <div class="tb ex"><b>💡 Contoh</b>
+                <p>192.168.1.10 berada di Kelas C (192 ada di rentang 192 sampai 223), gangnya 192.168.1.0, nomor
+                  rumahnya 10. Dengan 192.168.1.20 satu gang, dengan 192.168.2.20 beda gang.</p>
+              </div>
+            </div>
+          </details>
+
+          <div class="scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Kelas</th>
+                  <th>Oktet pertama</th>
+                  <th>Bit awal</th>
+                  <th>Mask default</th>
+                  <th>Jumlah jaringan</th>
+                  <th>Host per jaringan</th>
+                  <th>Penggunaan</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>A</b></td>
+                  <td>1 – 126</td>
+                  <td>0xxxxxxx</td>
+                  <td>255.0.0.0 (/8)</td>
+                  <td>126</td>
+                  <td>16.777.214</td>
+                  <td>Jaringan sangat besar. Privat: 10.0.0.0/8</td>
+                </tr>
+                <tr>
+                  <td><b>B</b></td>
+                  <td>128 – 191</td>
+                  <td>10xxxxxx</td>
+                  <td>255.255.0.0 (/16)</td>
+                  <td>16.384</td>
+                  <td>65.534</td>
+                  <td>Jaringan menengah. Privat: 172.16.0.0 sampai 172.31.255.255</td>
+                </tr>
+                <tr>
+                  <td><b>C</b></td>
+                  <td>192 – 223</td>
+                  <td>110xxxxx</td>
+                  <td>255.255.255.0 (/24)</td>
+                  <td>2.097.152</td>
+                  <td>254</td>
+                  <td>Jaringan kecil seperti sekolah dan kantor. Privat: 192.168.0.0/16</td>
+                </tr>
+                <tr>
+                  <td><b>D</b></td>
+                  <td>224 – 239</td>
+                  <td>1110xxxx</td>
+                  <td>tidak ada</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>Multicast (satu pengirim ke banyak penerima)</td>
+                </tr>
+                <tr>
+                  <td><b>E</b></td>
+                  <td>240 – 255</td>
+                  <td>1111xxxx</td>
+                  <td>tidak ada</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>Cadangan dan eksperimen</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <ul style="margin:10px 0 0;padding-left:20px">
+            <li>127.x.x.x dicadangkan untuk loopback (komputer itu sendiri).</li>
+            <li>ID host semuanya 0 adalah <b>alamat jaringan</b>, semuanya 1 adalah <b>alamat broadcast</b>. Keduanya
+              tidak boleh dipakai komputer, maka host per jaringan = 2<sup>n</sup> − 2.</li>
+            <li>Dua komputer bisa langsung saling kirim lewat switch jika <b>ID jaringannya sama</b>, seperti dua rumah
+              di gang yang sama. Beda ID jaringan (beda gang) harus lewat router.</li>
+          </ul>
+        </section>
+
+        <section class="panel">
+          <h2>Periksa sebuah alamat IP</h2>
+          <div class="row"><label for="kIp">Alamat IP</label><input type="text" id="kIp" value="192.168.1.10"></div>
+          <div class="bin" id="kBin"></div>
+          <div id="kOut"></div>
+        </section>
+
+        <section class="panel">
+          <h2>Simulasi: bisa terhubung atau tidak?</h2>
+          <label class="kip-mode" id="kModeBar">
+            <span class="km-icon" aria-hidden="true">🧠</span>
+            <span class="km-copy"><b>Mode tebak</b><small id="kModeHint">Hasil langsung terlihat. Aktifkan untuk
+                menebak dulu sebelum hasil dibuka.</small></span>
+            <input type="checkbox" id="kGuessOn" aria-label="Mode tebak" aria-describedby="kModeHint">
+            <span class="km-switch" aria-hidden="true"><i></i></span>
+          </label>
+          <h3 class="stp"><span>1</span> Pilih skenario</h3>
+          <div id="kCards"></div>
+          <div class="stepbox kip-brief" id="kInfo"></div>
+          <h3 class="stp"><span>2</span> Periksa dan ubah konfigurasi</h3>
+          <p class="note" style="margin:0 0 8px">Ubah isian untuk bereksperimen. Hasil diperbarui otomatis; di mode
+            tebak hasil tetap terkunci sampai kamu menebak. Kolom bergaris tebal adalah fokus skenario.</p>
+          <div class="row" id="kMode" role="group" aria-label="Susunan perangkat"><b style="font-size:14px">Susunan
+              perangkat:</b><button data-m="sw" class="on">Satu switch (tanpa router)</button><button data-m="rt">Dua
+              jaringan dengan router</button></div>
+          <div class="fgrid">
+            <div><b style="color:var(--acc)">💻 PC A (pengirim)</b>
+              <div class="fld"><label for="kaIp">IP</label><input id="kaIp" type="text"></div>
+              <div class="fld"><label for="kaMk">Subnet mask</label><input id="kaMk" type="text"></div>
+              <div class="fld"><label for="kaGw">Gateway</label><input id="kaGw" type="text"></div>
+              <div class="note" id="kaInfo"></div>
+            </div>
+            <div><b style="color:var(--acc)">💻 PC B (penerima)</b>
+              <div class="fld"><label for="kbIp">IP</label><input id="kbIp" type="text"></div>
+              <div class="fld"><label for="kbMk">Subnet mask</label><input id="kbMk" type="text"></div>
+              <div class="fld"><label for="kbGw">Gateway</label><input id="kbGw" type="text"></div>
+              <div class="note" id="kbInfo"></div>
+            </div>
+          </div>
+          <div class="fgrid hide" id="kRt">
+            <div class="fld"><label for="kr1">IP router sisi PC A</label><input id="kr1" type="text"></div>
+            <div class="fld"><label for="kr2">IP router sisi PC B</label><input id="kr2" type="text"></div>
+          </div>
+          <div class="netbox" id="kNet"></div>
+          <div class="row" style="margin-top:10px"><button id="kReset">Kembalikan ke nilai skenario</button></div>
+          <h3 class="stp" id="kStep3"><span>3</span> Hasil ping</h3>
+          <div id="kGuess" class="guesscard hide" aria-labelledby="kGuessTitle">
+            <div class="gc-top"><b id="kGuessTitle">Saatnya menebak</b><span class="gc-lock">🔒 Jawaban belum
+                dikunci</span></div>
+            <p>Sebelum hasil dibuka: apakah ping dari PC A ke PC B berhasil?</p>
+            <div class="guess-actions">
+              <button class="guess yes" data-g="1"><span class="g-ic" aria-hidden="true">✅</span><span
+                  class="g-tx"><b>Nyambung</b><small>Paket sampai dan balasan kembali</small></span></button>
+              <button class="guess no" data-g="0"><span class="g-ic" aria-hidden="true">❌</span><span
+                  class="g-tx"><b>Tidak nyambung</b><small>Ada yang menghalangi paket</small></span></button>
+            </div>
+            <p class="guess-note">Belum yakin? Periksa lagi IP, mask, gateway, dan kotak perbandingan ID jaringan di
+              atas. Kamu tetap bisa mengubah isian sebelum menebak.</p>
+          </div>
+          <div id="kLocked" class="lockedbox hide"><span aria-hidden="true">🔒</span>
+            <div><b>Hasil masih terkunci</b>
+              <p>Pilih <b>Nyambung</b> atau <b>Tidak nyambung</b> di atas untuk membuka hasil, alasan, dan log
+                perjalanan paket.</p>
+            </div>
+          </div>
+          <div id="kResWrap">
+            <p id="kGfb" class="guess-fb" role="status" aria-live="polite"></p>
+            <svg viewBox="0 0 720 130" id="kSvg" role="img" aria-label="Diagram dua komputer"
+              style="margin-top:8px"></svg>
+            <div class="stepbox" id="kRes"></div>
+            <ol class="lg" id="kLog"></ol>
+          </div>
+        </section>
+      </div>
+
+      <!-- ======================= PACKET JOURNEY ======================= -->
+      <div id="v-pj" class="hide">
+        <div class="mission"><span class="mi">📦</span>
+          <div><b>Misi 4: Jadi kurir paket data</b>
+            <p>Ikuti satu paket dari laptopmu sampai server dan kembali. Lalu rusak jaringannya dan lihat apa yang
+              gagal. Jalankan minimal <b>3 simulasi paket</b> sampai langkah terakhir untuk lolos, dan selesaikan
+              perjalanan normal untuk lencana Kurir Paket!</p>
+          </div>
+        </div>
+        <details class="panel" open>
+          <summary>💡 Teori singkat, analogi, dan contoh</summary>
+          <div class="trio">
+            <div class="tb"><b>📖 Intinya</b>
+              <p>Saat membuka web, komputer bertanya alamat ke DNS, membuat koneksi TCP (three-way handshake), meminta
+                halaman lewat HTTP, lalu menerima data dalam potongan paket.</p>
+            </div>
+            <div class="tb an"><b>🧩 Analogi</b>
+              <p>Seperti kirim barang lewat kurir: tanya alamat toko ke buku telepon (DNS), ketuk pintu dan sapa dulu
+                (handshake), baru pesan barang dan terima paketnya.</p>
+            </div>
+            <div class="tb ex"><b>💡 Contoh</b>
+              <p>Ketik www.sekolahku.sch.id: DNS menjawab IP-nya, TCP menyambung, HTTP meminta halaman, lalu halaman
+                tampil. Coba matikan DNS untuk melihat apa yang gagal.</p>
+            </div>
+          </div>
+        </details>
+
+        <section class="panel">
+          <div class="row">
+            <label for="dom">Ketik alamat situs (URL)</label>
+            <input type="text" id="dom" value="www.sekolahku.sch.id">
+            <button id="go" class="on">🚀 Mulai Perjalanan</button>
+          </div>
+          <div class="row" style="margin-top:10px" id="scn">
+            <button data-s="normal" class="on">Internet Lancar</button>
+            <button data-s="dns">DNS Error</button>
+            <button data-s="link">Kabel Provider Putus</button>
+            <button data-s="server">Server Web Mati</button>
+          </div>
+        </section>
+
+        <section class="panel">
+          <svg viewBox="0 0 720 230" role="img" aria-label="Diagram jalur paket dari laptop ke server">
+            <g id="lines"></g>
+            <g id="nodes"></g>
+            <g id="pk" style="transform:translate(60px,160px);transition:transform .38s linear">
+              <circle r="10" />
+            </g>
+          </svg>
+          <div class="stepbox" id="sb"><b id="sT"></b>
+            <p id="sD"></p>
+          </div>
+          <div class="row" style="margin-top:12px">
+            <button id="prev">⏪ Mundur</button>
+            <button id="play" class="on">▶️ Putar</button>
+            <button id="next">⏩ Maju</button>
+            <button id="reset">🔄 Ulang</button>
+          </div>
+          <div class="stats">
+            <div><b id="sHop">0</b><small>Lompatan (Hop) Router</small></div>
+            <div><b id="sMs">0 ms</b><small>Estimasi Waktu Tempuh</small></div>
+            <div><b id="sStep">0</b><small>Tahapan Proses</small></div>
+          </div>
+        </section>
+
+        <div class="two">
+          <section class="panel">
+            <h2>Isi Paket Data per Lapisan (Layer)</h2>
+            <div class="layers" id="layers"></div>
+            <p class="note">Data dibungkus secara berurutan (Enkapsulasi) sebelum dikirim, analoginya persis seperti
+              proses mengirim barang lewat kurir logistik.</p>
+          </section>
+          <section class="panel">
+            <h2>Log Perjalanan Paket</h2>
+            <ol class="sl" id="sl"></ol>
+          </section>
+        </div>
+
+        <section class="panel">
+          <h2>Tebak Langkah Selanjutnya!</h2>
+          <p class="note" style="margin:0 0 10px">Uji pemahamanmu mengenai tahapan protokol pengiriman paket data
+            (TCP/IP).</p>
+          <button id="chStart" class="on">Mulai Tantangan</button>
+          <div id="chBox" class="hide">
+            <div class="stepbox" style="margin-top:12px"><b id="chQ"></b></div>
+            <div id="chBtns"></div>
+            <div id="chFb"></div>
+            <div id="chNext"></div>
+            <p class="note" id="chScore"></p>
+          </div>
+        </section>
+      </div>
+
+      <!-- ======================= KUIS ======================= -->
+      <div id="v-kuis" class="hide">
+        <div class="mission"><span class="mi">🏆</span>
+          <div><b>Misi 5: Boss battle</b>
+            <p>Jawab 10 soal acak dari seluruh materi. Skor 8 ke atas memberi lencana Master Kuis, dan tiap jawaban
+              benar memberi XP!</p>
+          </div>
+        </div>
+
+        <section class="panel">
+          <h2>Kuis Pemahaman Bab 4</h2>
+          <p class="note" style="margin:0 0 10px">Kerjakan 10 soal acak dari 31 soal yang mencakup seluruh materi bab
+            ini.</p>
+          <button id="zStart" class="on">Mulai Kuis</button>
+          <div id="zBox" class="hide">
+            <div class="stepbox" style="margin-top:12px"><b id="zQ"></b></div>
+            <div id="zBtns"></div>
+            <div id="zFb"></div>
+            <div id="zNext"></div>
+            <p class="note" id="zScore"></p>
+          </div>
+        </section>
+      </div>
+
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="help" id="help" role="dialog" aria-modal="true" aria-labelledby="hT" hidden>
+    <div class="hbox">
+      <div class="hhead">
+        <h2 id="hT">❓ Bantuan: cara main NetLab Quest</h2><button id="hClose">✕ Tutup</button>
+      </div>
+      <div class="hbody" id="hBody"></div>
+    </div>
+  </div>
+  <div class="share" id="share" role="dialog" aria-modal="true" aria-labelledby="shT" hidden>
+    <div class="shbox">
+      <div class="hhead">
+        <h2 id="shT">📤 Bagikan pencapaian</h2><button id="shClose">✕ Tutup</button>
+      </div>
+      <div class="shbody"><img id="shImg" alt="Kartu gambar pencapaian NetLab Quest">
+        <p class="note">Bagikan kartu ini ke media sosial atau simpan sebagai gambar. Isinya mengikuti level, lencana,
+          dan status misi terbaru.</p>
+      </div>
+      <div class="shfoot"><button id="shDown" class="on">⬇️ Unduh gambar</button><button id="shShare">📤
+          Bagikan</button></div>
+    </div>
+  </div>
+  <canvas id="fx" aria-hidden="true"></canvas>
+  <button id="aFab" type="button" aria-label="Matikan musik dan efek suara" aria-pressed="true"
+    title="Matikan musik dan efek suara">🔊</button>
+  <div class="mdone" id="mdone" role="dialog" aria-live="polite" aria-labelledby="mdT">
+    <div class="mcard">
+      <div class="me" id="mdE">🎉</div>
+      <h2 id="mdT"></h2>
+      <p id="mdP"></p>
+      <div class="row" id="mdB" style="justify-content:center"></div>
+    </div>
+  </div>
+
+  <script>
+    var $ = function (i) {return document.getElementById(i)};
+    var NP = [[60, 160], [190, 160], [290, 55], [380, 160], [510, 160], [650, 160]];
+    var NN = [["💻", "Laptop Kamu"], ["📶", "WiFi Sekolah"], ["📖", "Server DNS"], ["🏢", "Router ISP"], ["🌐", "Backbone Internet"], ["🖥️", "Server Web Tujuan"]];
+    var LK = [[0, 1], [1, 2], [1, 3], [3, 4], [4, 5]];
+    var CL = "192.168.1.23";
+    var S = {scn: "normal", steps: [], i: 0, run: 0, playing: false, doneRun: false};
+
+    /* Util IP Dasar */
+    function ip2n(s) {var p = s.trim().split("."), n = 0, i; if (p.length !== 4) return null; for (i = 0; i < 4; i++) {if (!/^\d{1,3}$/.test(p[i]) || +p[i] > 255) return null; n = n * 256 + +p[i];} return n;}
+    function n2ip(n) {return [n >>> 24, (n >>> 16) & 255, (n >>> 8) & 255, n & 255].join('.')}
+    function cl(n) {var o = n >>> 24; return o === 0 ? '-' : o < 127 ? 'A' : o === 127 ? 'L' : o < 192 ? 'B' : o < 224 ? 'C' : o < 240 ? 'D' : 'E'}
+    function dm(c) {return c === 'A' ? 0xFF000000 : c === 'B' ? 0xFFFF0000 : c === 'C' ? 0xFFFFFF00 : null}
+    function maskOk(s) {var n = ip2n(s); if (n === null) return false; var v = (~n) >>> 0; return ((v & ((v + 1) >>> 0)) >>> 0) === 0;}
+    function nt(i, m) {return (i & m) >>> 0}
+
+    /* Packet Journey */
+    function ipOf(d) {var h = 0; for (var i = 0; i < d.length; i++)h = (h * 31 + d.charCodeAt(i)) % 250; return "203.0.113." + (h + 1);}
+    function gen(scn, dom) {
+      var ip = ipOf(dom), fw = [0, 1, 3, 4, 5], bw = [5, 4, 3, 1, 0];
+      var A = {route: [0], t: "Browser Melakukan Request", d: "Kamu mengetikkan alamat " + dom + ". Browser mengerti namanya, tetapi belum mengetahui alamat IP (nomor rumah) dari server tujuan tersebut.", ms: 0, l: ["Menyiapkan HTTP GET (Belum terkirim)", 0, 0, 0]};
+      var B = {route: [0, 1, 2], t: "Bertanya pada Server DNS", d: "Komputer secara otomatis menanyakan IP Address dari domain " + dom + " kepada Server DNS (yang bertindak ibarat buku telepon untuk internet).", ms: 18, l: ["DNS: Menanyakan alamat " + dom, "Protokol UDP (Port 53)", "IP asal " + CL + " dikirim ke DNS", "Dibungkus Frame WiFi"]};
+      var C = {route: [2, 1, 0], t: "Server DNS Merespons", d: "Server DNS menjawab dengan IP Address yang dicari (" + ip + "). Alamat IP ini kemudian disimpan sementara (Cache) oleh komputermu.", ms: 18, l: ["DNS: Memberikan balasan IP " + ip, "Protokol UDP (Port 53)", "Dari IP DNS dikembalikan ke " + CL, "Dikirim lewat WiFi ke laptop"]};
+      var D = {route: fw, t: "TCP SYN: Inisiasi Koneksi", d: "Komputer mengirim paket SYN (Synchronize) ke server tujuan. Ibarat mengetuk pintu dan menyapa, 'Halo, bisakah kita mulai bertukar data?'. Paket diarahkan antar router.", ms: 40, l: [0, "TCP: Mengirim sinyal SYN", "IP " + CL + " menuju IP " + ip, "Frame MAC Address diperbarui tiap router"]};
+      var E = {route: bw, t: "TCP SYN-ACK: Server Menyetujui", d: "Server membalas dengan paket SYN-ACK. Artinya server menjawab sapaan, 'Halo, tentu saja, saya siap. Bagaimana denganmu?'.", ms: 40, l: [0, "TCP: Membalas SYN + ACK", "IP " + ip + " kembali ke " + CL, "Frame MAC diperbarui tiap router"]};
+      var F = {route: fw, t: "TCP ACK: Koneksi Sepenuhnya Terbentuk", d: "Komputer merespons kembali dengan paket ACK. Proses tiga langkah ini disebut 'Three-Way Handshake', memastikan jalur komunikasi valid dan aman.", ms: 40, l: [0, "TCP: Mengirim konfirmasi ACK", "IP " + CL + " menuju IP " + ip, "Frame MAC diperbarui tiap router"]};
+      var G = {route: fw, t: "HTTP GET: Meminta Halaman Web", d: "Setelah koneksi TCP dipastikan stabil, barulah browser mengirimkan perintah HTTP GET untuk meminta isi halaman website dari server tersebut.", ms: 40, l: ["HTTP: GET Minta file HTML untuk " + dom, "TCP: Mengirimkan urutan data", "IP " + CL + " menuju IP " + ip, "Frame MAC diperbarui tiap router"]};
+      var H = {route: bw, t: "Server Mengirim Data Halaman Web", d: "Halaman web dipecah menjadi banyak potongan paket kecil. Protokol TCP bertugas merangkainya kembali nanti dan mengecek apakah ada bagian paket yang hilang di jalan.", ms: 45, l: ["HTTP: 200 OK + Data HTML dikirim", "TCP: Potongan data urutan ke-1 dst.", "IP " + ip + " kembali ke " + CL, "Frame MAC diperbarui tiap router"]};
+      var I = {route: [0], t: "Browser Menampilkan Halaman Web", d: "Semua potongan paket data telah tiba secara utuh dan dirangkai ulang oleh sistem. Hasilnya, halaman website " + dom + " berhasil tampil di layar komputermu secara instan.", ms: 5, l: ["Browser me-render (menampilkan) HTML", 0, 0, 0]};
+      var fail = function (n, t, d, l) {return {route: [n], t: t, d: d, ms: 2000, fail: true, broken: n, l: l}};
+      if (scn === "normal") return [A, B, C, D, E, F, G, H, I];
+      if (scn === "dns") return [A, B, fail(2, "Server DNS Tidak Merespons", "Server DNS mengalami gangguan, sehingga komputer tidak bisa mengetahui IP Address tujuannya. Biasa ditandai dengan pesan error 'DNS_PROBE_FINISHED_NXDOMAIN'.", ["DNS: Tidak ada balasan respons", "Menunggu hingga Timeout", 0, 0])];
+      var D2 = {route: [0, 1, 3], t: "Tertahan di Router ISP", d: D.d, ms: 25, l: D.l};
+      if (scn === "link") return [A, B, C, D2, fail(3, "Jalur Backbone/Router Terputus", "Paket TCP SYN tidak pernah sampai ke server tujuan karena kabel/router dari Internet Service Provider (ISP) terputus atau mengalami gangguan.", ["TCP: Menunggu balasan SYN-ACK", "IP: Paket hilang (Drop) di tengah jalan", 0, 0])];
+      return [A, B, C, D, fail(5, "Server Tujuan Tidak Merespons", "Paket berhasil mencapai tujuan dengan selamat, namun server penyedia layanan web tersebut sedang down (mati atau perbaikan) sehingga tidak ada respons balasan.", ["TCP: Balasan SYN-ACK tidak ada", "IP: Tiba di tujuan namun diabaikan", 0, 0])];
+    }
+    function buildSvg() {
+      $("lines").innerHTML = LK.map(function (k) {return '<line class="ln" x1="' + NP[k[0]][0] + '" y1="' + NP[k[0]][1] + '" x2="' + NP[k[1]][0] + '" y2="' + NP[k[1]][1] + '"/>'}).join("");
+      $("nodes").innerHTML = NN.map(function (n, i) {return '<g class="nd" id="n' + i + '"><circle cx="' + NP[i][0] + '" cy="' + NP[i][1] + '" r="28"/><text class="ic" x="' + NP[i][0] + '" y="' + NP[i][1] + '">' + n[0] + '</text><text class="lb" x="' + NP[i][0] + '" y="' + (NP[i][1] + 48) + '">' + n[1] + '</text></g>'}).join("");
+    }
+    function setPk(n, anim) {var p = $("pk"); p.style.transition = anim ? "transform .38s linear" : "none"; p.style.transform = "translate(" + NP[n][0] + "px," + NP[n][1] + "px)";}
+    function sleep(ms) {return new Promise(function (r) {setTimeout(r, ms)})}
+    function paint() {
+      var s = S.steps[S.i], hop = 0, ms = 0, k;
+      for (k = 0; k <= S.i; k++) {hop += S.steps[k].route.length - 1; ms += S.steps[k].ms;}
+      $("sT").textContent = s.t; $("sD").textContent = s.d; $("sb").className = "stepbox" + (s.fail ? " bad" : "");
+      $("sHop").textContent = hop; $("sMs").textContent = ms + " ms"; $("sStep").textContent = (S.i + 1) + " / " + S.steps.length;
+      var names = ["Application Layer", "Transport Layer", "Internet Layer", "Network Access Layer"];
+      $("layers").innerHTML = names.map(function (n, j) {var v = s.l[j]; return '<div class="ly' + (v ? " has" : "") + '"><strong>' + n + '</strong><code>' + (v || "(Belum ada aktivitas di layer ini)") + '</code></div>'}).join("");
+      for (k = 0; k < NN.length; k++)$("n" + k).setAttribute("class", "nd" + (s.route.indexOf(k) > -1 ? " on" : "") + (s.fail && s.broken === k ? " bad" : ""));
+      $("pk").setAttribute("class", "");
+      $("prev").disabled = S.i === 0; $("next").disabled = S.i === S.steps.length - 1;
+      var btn = $("sl").querySelectorAll("button");
+      for (k = 0; k < btn.length; k++)btn[k].className = k === S.i ? "cur" : "";
+    }
+    async function show(i) {
+      var id = ++S.run; S.i = i; paint();
+      var s = S.steps[i]; setPk(s.route[0], false); await sleep(40);
+      for (var k = 1; k < s.route.length; k++) {if (id !== S.run) return; setPk(s.route[k], true); await sleep(420);}
+      if (id !== S.run) return;
+      if (s.fail) $("pk").setAttribute("class", "bad");
+      if (S.playing) {await sleep(1200); if (id !== S.run) return; if (i < S.steps.length - 1) show(i + 1); else endPlay();}
+    }
+    function endPlay() {S.playing = false; $("play").textContent = "▶️ Putar";}
+    function load() {
+      S.run++; endPlay(); S.doneRun = false;
+      var d = $("dom").value.trim() || "www.sekolahku.sch.id";
+      S.steps = gen(S.scn, d); S.i = 0;
+      $("sl").innerHTML = S.steps.map(function (s, i) {return '<li><button data-i="' + i + '"></button></li>'}).join("");
+      var b = $("sl").querySelectorAll("button");
+      S.steps.forEach(function (s, i) {b[i].textContent = s.t; b[i].onclick = function () {S.playing = false; endPlay(); if (i === 0) S.doneRun = false; show(i)}});
+      show(0);
+    }
+    function toggle() {if (S.playing) {S.run++; endPlay(); return;} S.playing = true; $("play").textContent = "⏸️ Jeda"; if (S.i === S.steps.length - 1) S.doneRun = false; show(S.i === S.steps.length - 1 ? 0 : S.i);}
+
+    /* Tantangan */
+    var C = {qs: [], q: 0, sc: 0, st: []};
+    function shuf(a) {return a.slice().sort(function () {return Math.random() - .5})}
+    function chStart() {
+      C.st = gen("normal", "www.sekolahku.sch.id");
+      var idx = shuf([1, 2, 3, 4, 5, 6, 7, 8]).slice(0, 5).sort(function (a, b) {return a - b});
+      C.qs = idx; C.q = 0; C.sc = 0; $("chNext").innerHTML = ""; $("chBox").classList.remove("hide"); ask();
+    }
+    function ask() {
+      var i = C.qs[C.q], st = C.st; $("chFb").innerHTML = "";
+      $("chQ").textContent = "Pertanyaan ke-" + (C.q + 1) + " dari " + C.qs.length + ": Setelah tahapan \u201C" + st[i - 1].t + "\u201D selesai, proses apa yang terjadi selanjutnya?";
+      var wrong = shuf(st.filter(function (s, j) {return j !== i && st[j].t !== st[i].t && j !== i - 1})).slice(0, 2);
+      var opts = shuf([st[i]].concat(wrong));
+      $("chBtns").innerHTML = "";
+      opts.forEach(function (o) {var b = document.createElement("button"); b.textContent = o.t; b.onclick = function () {answer(o === st[i])}; $("chBtns").appendChild(b);});
+      $("chScore").textContent = "Skor: " + C.sc;
+    }
+    function answer(ok) {
+      var i = C.qs[C.q]; if (ok) C.sc++;
+      $("chFb").innerHTML = '<div class="fb ' + (ok ? "ok" : "no") + '"><b>' + (ok ? "Jawaban Benar! 🎉 " : "Belum Tepat 😅 ") + C.st[i].t + ".</b> " + C.st[i].d + "</div>";
+      var last = C.q === C.qs.length - 1, b = document.createElement("button"); b.className = "on";
+      b.textContent = last ? "Lihat Hasil Akhir" : "Soal Berikutnya";
+      $("chBtns").innerHTML = ""; $("chNext").innerHTML = ""; $("chNext").appendChild(b);
+      b.onclick = function () {if (last) {$("chQ").textContent = "Tantangan Selesai! Skor akhirmu: " + C.sc + " dari " + C.qs.length + (C.sc === C.qs.length ? ". Sempurna!" : ". Terus pelajari tahapannya ya."); $("chBtns").innerHTML = ""; $("chFb").innerHTML = ""; $("chNext").innerHTML = "";} else {C.q++; $("chNext").innerHTML = ""; ask();} };
+      $("chScore").textContent = "Skor: " + C.sc;
+    }
+
+    /* Event Binding (Packet Journey dll) */
+    document.querySelectorAll("#scn button").forEach(function (b) {
+      b.onclick = function () {
+        document.querySelectorAll("#scn button").forEach(function (x) {x.classList.remove("on")});
+        b.classList.add("on"); S.scn = b.dataset.s; load();
+      }
+    });
+    $("go").onclick = load;
+    $("dom").onkeydown = function (e) {if (e.key === "Enter") load()};
+    $("play").onclick = toggle;
+    $("next").onclick = function () {S.playing = false; endPlay(); if (S.i < S.steps.length - 1) show(S.i + 1)};
+    $("prev").onclick = function () {S.playing = false; endPlay(); if (S.i > 0) show(S.i - 1)};
+    $("reset").onclick = function () {S.playing = false; endPlay(); S.doneRun = false; show(0)};
+    $("chStart").onclick = chStart;
+
+    /* Tab Navigation */
+    var VS = ["materi", "topo", "kip", "pj", "kuis"];
+    function tab(t) {
+      S.playing = false; S.run++; endPlay();
+      VS.forEach(function (v) {$("v-" + v).classList.toggle("hide", v !== t)});
+      document.querySelectorAll("#tabs button").forEach(function (b) {b.classList.toggle("on", b.dataset.t === t)});
+      if (t === "pj") show(S.i);
+      window.scrollTo(0, 0);
+    }
+    document.querySelectorAll("#tabs button,.go").forEach(function (b) {b.onclick = function () {tab(b.dataset.t)}});
+
+    /* Topologi Jaringan */
+    var PP = [[360, 40], [505, 95], [450, 205], [270, 205], [215, 95]];
+    function pent() {return PP.map(function (p) {return [p[0], p[1], "c"]})}
+    var TP = {
+      bus: {n: "Topologi Bus", d: "Seluruh komputer disambungkan secara seri menggunakan satu kabel utama.", nodes: [[140, 45, "c"], [360, 45, "c"], [580, 45, "c"], [250, 215, "c"], [470, 215, "c"], [360, 130, "b"]], l: [[0, 5], [1, 5], [2, 5], [3, 5], [4, 5]], pro: ["Hemat dalam penggunaan kabel", "Desain sederhana dan instalasi mudah"], con: ["Sangat berisiko: Jika kabel utama (Backbone) putus, seluruh jaringan ikut terputus", "Cenderung lambat jika lalu lintas data sedang tinggi"]},
+      ring: {n: "Topologi Ring", d: "Komputer dihubungkan melingkar membentuk cincin. Data berputar secara berurutan.", nodes: pent(), l: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0]], pro: ["Aliran data lebih teratur karena arahnya jelas", "Penggunaan kabel yang efisien"], con: ["Pada cincin sungguhan, satu titik yang rusak dapat menghentikan perputaran data (simulasi ini hanya menghitung koneksi yang tersisa)", "Penambahan perangkat baru cukup merepotkan"]},
+      star: {n: "Topologi Star", d: "Semua komputer dihubungkan ke perangkat sentral (Hub atau Switch) di tengah.", nodes: pent().concat([[360, 125, "h"]]), l: [[0, 5], [1, 5], [2, 5], [3, 5], [4, 5]], pro: ["Mudah dikonfigurasi dan dipelihara", "Satu komputer terputus tidak akan mengganggu komputer yang lain"], con: ["Ketergantungan tinggi pada Switch. Jika Switch rusak, seluruh jaringan terputus", "Lebih banyak menghabiskan kabel"]},
+      mesh: {n: "Topologi Mesh", d: "Semua komputer terhubung secara langsung (point-to-point) ke seluruh komputer lainnya.", nodes: pent(), l: [[0, 1], [0, 2], [0, 3], [0, 4], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]], pro: ["Sangat handal (fault tolerant): Jika ada satu kabel terputus, data bisa lewat jalur lain", "Tingkat keamanan jalur data tinggi"], con: ["Membutuhkan sangat banyak kabel (biaya mahal)", "Instalasi sangat rumit"]},
+      hybrid: {n: "Topologi Hybrid (Tree)", d: "Merupakan kombinasi dari beberapa topologi dasar (misal penggabungan Star dan Bus).", nodes: [[100, 50, "c"], [100, 200, "c"], [620, 40, "c"], [650, 125, "c"], [620, 210, "c"], [240, 125, "h"], [490, 125, "h"]], l: [[0, 5], [1, 5], [5, 6], [2, 6], [3, 6], [4, 6]], pro: ["Sangat fleksibel dan mudah diperbesar cakupannya", "Lokalisasi gangguan lebih mudah terdeteksi"], con: ["Desain instalasi yang lebih kompleks", "Biaya pembangunan yang relatif besar"]}
+    };
+    var T = {k: "star", f: {}};
+    function tpCalc() {
+      var d = TP[T.k], adj = d.nodes.map(function () {return []}), seen = {}, best = 0, alive = 0;
+      d.l.forEach(function (l) {if (!T.f[l[0]] && !T.f[l[1]]) {adj[l[0]].push(l[1]); adj[l[1]].push(l[0]);} });
+      d.nodes.forEach(function (n, i) {if (n[2] === "c" && !T.f[i]) alive++;});
+      d.nodes.forEach(function (n, i) {
+        if (T.f[i] || seen[i]) return;
+        var st = [i], cnt = 0; seen[i] = 1;
+        while (st.length) {var u = st.pop(); if (d.nodes[u][2] === "c") cnt++; adj[u].forEach(function (v) {if (!seen[v]) {seen[v] = 1; st.push(v);} });}
+        if (cnt > best) best = cnt;
+      });
+      return [best, alive];
+    }
+    function tpDraw() {
+      var d = TP[T.k], h = "", ci = 0, fc = 0, k;
+      d.l.forEach(function (l) {
+        var a = d.nodes[l[0]], b = d.nodes[l[1]], ax = a[0], bx = b[0];
+        if (a[2] === "b") ax = bx; if (b[2] === "b") bx = ax;
+        h += '<line class="ln' + (T.f[l[0]] || T.f[l[1]] ? " dead" : "") + '" x1="' + ax + '" y1="' + a[1] + '" x2="' + bx + '" y2="' + b[1] + '"/>';
+      });
+      d.nodes.forEach(function (n, i) {
+        var bad = T.f[i] ? " bad" : ""; if (bad) fc++;
+        if (n[2] === "b") h += '<g class="tn' + bad + '" data-i="' + i + '" tabindex="0" role="button" aria-label="Kabel utama"><rect x="80" y="' + (n[1] - 8) + '" width="560" height="16" rx="8"/><text class="lb" x="360" y="' + (n[1] + 28) + '">Kabel utama</text></g>';
+        else h += '<g class="tn' + bad + '" data-i="' + i + '" tabindex="0" role="button" aria-label="' + (n[2] === "c" ? "Komputer" : "Hub") + '"><circle cx="' + n[0] + '" cy="' + n[1] + '" r="24"/><text class="ic" x="' + n[0] + '" y="' + n[1] + '">' + (n[2] === "c" ? "\uD83D\uDCBB" : "\uD83D\uDD00") + '</text><text class="lb" x="' + n[0] + '" y="' + (n[1] + 42) + '">' + (n[2] === "c" ? "PC " + (++ci) : "Switch") + '</text></g>';
+      });
+      $("tpSvg").innerHTML = h;
+      $("tpSvg").querySelectorAll(".tn").forEach(function (g) {
+        var f = function () {var i = g.dataset.i; if (T.f[i]) delete T.f[i]; else T.f[i] = 1; tpDraw();};
+        g.onclick = f; g.onkeydown = function (e) {if (e.key === "Enter" || e.key === " ") {e.preventDefault(); f();} };
+      });
+      var r = tpCalc();
+      $("tpK").textContent = d.l.length; $("tpC").textContent = r[0] + " / " + r[1]; $("tpF").textContent = fc;
+      $("tpRes").className = "stepbox" + (r[0] < r[1] || r[1] < 2 ? " bad" : "");
+      $("tpRes").innerHTML = "<b>" + d.n + "</b><p>" + d.d + " " + (fc === 0 ? "Kondisi jaringan aman, seluruh komputer saling terhubung." : r[0] <= 1 ? "Jaringan terputus total." : r[0] === r[1] ? "Perangkat aktif masih terhubung." : "Koneksi jaringan terpecah (Isolated).") + "</p>";
+      $("tpPro").innerHTML = d.pro.map(function (x) {return "<li>" + x + "</li>"}).join("");
+      $("tpCon").innerHTML = d.con.map(function (x) {return "<li>" + x + "</li>"}).join("");
+      var bs = $("tpBtns").querySelectorAll("button");
+      Object.keys(TP).forEach(function (key, i) {bs[i].className = key === T.k ? "on" : ""});
+    }
+    Object.keys(TP).forEach(function (key) {var b = document.createElement("button"); b.textContent = TP[key].n.split(" ")[1] || TP[key].n; b.onclick = function () {T.k = key; T.f = {}; tpDraw();}; $("tpBtns").appendChild(b);});
+
+    /* Kuis */
+    var QB = [
+      ["Jaringan komputer yang mencakup area geografi seluas satu kota, misalnya menghubungkan kantor cabang di daerah yang berbeda, dinamakan...", ["MAN (Metropolitan)", "LAN (Lokal)", "PAN (Personal)", "WAN (Global)"], "MAN merupakan singkatan dari Metropolitan Area Network."],
+      ["Jaringan terluas di dunia (Internet) umumnya menggunakan standar protokol pertukaran paket data apa?", ["TCP/IP", "PAN", "MAN", "Bluetooth"], "Protokol standar untuk mengirimkan paket data di internet adalah model TCP/IP."],
+      ["Pada konsep Topologi Star (Bintang), semua kabel pada tiap komputer difokuskan untuk dihubungkan ke mana?", ["Hub atau Switch", "Kabel tunggal (Backbone)", "Komputer sebelahnya", "Antena modem terdekat"], "Benar, semua komputer dihubungkan secara terpusat ke Hub atau Switch."],
+      ["Perangkat perantara yang tugas utamanya mencari jalur terbaik (routing) untuk meneruskan data antar jaringan yang berbeda kelas adalah...", ["Router", "Repeater", "Kabel UTP", "Hub"], "Router bertugas sebagai jembatan jaringan yang berbeda (Routing/Routing Table)."],
+      ["Model arsitektur protokol jaringan TCP/IP yang digunakan saat ini terbagi menjadi berapa lapisan (Layer)?", ["4 Lapisan", "7 Lapisan", "5 Lapisan", "3 Lapisan"], "TCP/IP terdiri dari 4 layer: Network Access, Internet, Transport, dan Application."],
+      ["Saat kamu ingin menyambungkan 2 PC secara langsung (peer-to-peer) lewat kabel LAN tanpa alat Switch, urutan pin kabelnya harus disusun menggunakan aturan tipe...", ["Cross-over", "Straight-through", "Fiber Optic", "Coaxial"], "Menghubungkan dua buah perangkat keras yang sejenis secara langsung membutuhkan kabel tipe Cross-over."],
+      ["Kelemahan paling fatal dari penerapan Topologi Bus adalah apa yang akan terjadi jika kabel utamanya (Backbone) mengalami kerusakan?", ["Seluruh sistem jaringan ikut terputus total", "Transfer data menjadi semakin cepat", "Hanya komputer di ujung kabel yang terputus", "Koneksi akan beralih menggunakan sinyal WiFi otomatis"], "Topologi Bus menggunakan satu media transmisi tunggal, jika medianya terputus maka seluruh komunikasi terhenti."],
+      ["Sebagai prinsip Cyber Security, mengapa disarankan agar tidak login ke layanan penting (m-banking, email) ketika menggunakan WiFi publik terbuka tanpa password?", ["Rentan terjadinya penyadapan data (Man-in-the-middle attack)", "Menghabiskan kuota perangkat", "Karena koneksinya dipastikan lambat", "WiFi publik menggunakan kabel yang saling silang"], "Koneksi terbuka yang tidak terenkripsi memudahkan pihak tidak bertanggung jawab untuk membaca arus data (Sniffing/Penyadapan)."],
+      ["Dua komputer terhubung ke satu switch dan punya ID jaringan yang sama. Apa yang terjadi?", ["Bisa langsung saling berkomunikasi", "Wajib lewat router", "Tidak bisa terhubung sama sekali", "Harus memakai kabel cross-over"], "ID jaringan yang sama berarti satu gang, jadi switch sudah cukup untuk mengantar paket."],
+      ["Alamat IP 192.168.1.10 termasuk kelas...", ["Kelas C", "Kelas A", "Kelas B", "Kelas D"], "Oktet pertama 192 berada di rentang 192 sampai 223, yaitu Kelas C."],
+      ["Lima komputer dihubungkan dengan topologi mesh penuh. Berapa jalur yang dimiliki tiap komputer?", ["4", "2", "5", "10"], "Tiap komputer terhubung langsung ke 4 komputer lain. Totalnya 10 kabel."],
+      ["Alamat IP yang bagian host-nya semuanya 1 (misalnya 192.168.1.255) disebut...", ["Alamat broadcast", "Alamat jaringan", "Gateway", "Loopback"], "Alamat broadcast dipakai untuk mengirim ke semua perangkat di satu jaringan, jadi tidak boleh dipakai satu komputer."],
+      ["Proses membuktikan identitas pengguna dengan ID dan kata sandi disebut...", ["Autentikasi", "Otorisasi", "Enkripsi", "Routing"], "Otorisasi adalah penentuan hak akses setelah identitas terbukti."],
+      ["Alamat 127.0.0.1 dipakai untuk apa?", ["Berkomunikasi dengan komputer itu sendiri (loopback)", "Menghubungkan dua komputer", "Alamat router", "Alamat broadcast"], "Seluruh alamat 127.x.x.x dicadangkan untuk loopback."],
+      ["Komputer A tidak punya gateway dan ingin mengirim ke jaringan lain. Apa yang terjadi?", ["Paket tidak punya jalan keluar", "Paket otomatis sampai", "Switch yang meneruskan", "Router mengisi gateway sendiri"], "Gateway adalah pintu keluar dari jaringan sendiri."],
+      ["Earphone Bluetooth yang terhubung ke ponselmu termasuk jenis jaringan...", ["PAN", "LAN", "MAN", "WAN"], "PAN (Personal Area Network) menghubungkan perangkat pribadi dalam jarak sangat dekat."],
+      ["Walkie-talkie yang bicaranya harus bergantian termasuk mode komunikasi...", ["Half duplex", "Simplex", "Full duplex", "Multicast"], "Half duplex: dua arah tetapi bergantian. Telepon adalah contoh full duplex."],
+      ["Kabel yang mengirim data memakai cahaya, cepat, dan tahan gangguan elektromagnetik adalah...", ["Fiber optik", "Kabel UTP", "Kabel coaxial", "Kabel cross-over"], "Fiber optik mengubah sinyal listrik menjadi sinyal cahaya."],
+      ["Konektor yang dipasang di ujung kabel UTP adalah...", ["RJ45", "BNC", "USB", "HDMI"], "RJ45 dipasang dengan tang crimping, lalu diuji dengan LAN tester."],
+      ["Urutan three-way handshake pada TCP adalah...", ["SYN, SYN-ACK, ACK", "ACK, SYN, SYN-ACK", "SYN-ACK, SYN, ACK", "DNS, HTTP, ACK"], "Klien menyapa (SYN), server setuju (SYN-ACK), klien mengonfirmasi (ACK)."],
+      ["Tugas utama server DNS adalah...", ["Mengubah nama situs menjadi alamat IP", "Menguatkan sinyal Wi-Fi", "Menyaring virus", "Menghubungkan kabel UTP"], "DNS bekerja seperti buku telepon internet."],
+      ["Subnet mask default untuk alamat Kelas B adalah...", ["255.255.0.0", "255.0.0.0", "255.255.255.0", "255.255.255.255"], "Kelas B memakai dua oktet pertama sebagai ID jaringan (/16)."],
+      ["Manakah yang termasuk alamat IP privat?", ["192.168.1.5", "8.8.8.8", "224.0.0.5", "127.0.0.1"], "Rentang privat: 10.x.x.x, 172.16 sampai 172.31, dan 192.168.x.x."],
+      ["Fungsi firewall pada jaringan adalah...", ["Menyaring lalu lintas masuk dan keluar", "Mengubah kabel menjadi nirkabel", "Mempercepat internet", "Menyimpan alamat IP"], "Firewall seperti gerbang yang memeriksa siapa yang boleh lewat."],
+      ["Kelemahan utama topologi star adalah...", ["Bergantung pada hub atau switch pusat", "Satu kabel utama menjadi tumpuan semua komputer", "Data harus berputar mengelilingi cincin", "Tidak bisa ditambah komputer baru"], "Jika switch pusat mati, semua komputer ikut terputus."],
+      ["Perangkat yang berfungsi menguatkan sinyal agar jangkauan jaringan lebih jauh adalah...", ["Repeater", "Modem", "NIC", "Router"], "Repeater memperkuat sinyal yang melemah karena jarak."],
+      ["Alamat 192.168.1.0 dengan mask 255.255.255.0 adalah...", ["Alamat jaringan (ID jaringan)", "Alamat broadcast", "Alamat host pertama", "Gateway"], "Bagian host yang semuanya 0 adalah alamat jaringan dan tidak boleh dipakai komputer."],
+      ["Pada jaringan LAN, perangkat yang menghubungkan banyak komputer dalam satu jaringan sehingga paket diantar ke tujuan yang tepat adalah...", ["Switch", "Modem", "Repeater", "Browser"], "Switch mengantar paket di dalam satu jaringan, sedangkan router menghubungkan jaringan yang berbeda."],
+      ["Enkripsi digunakan untuk...", ["Mengacak pesan agar hanya penerima yang bisa membacanya", "Mempercepat unduhan", "Menambah jumlah kabel", "Mengubah alamat IP"], "Enkripsi menjaga kerahasiaan dan membantu memastikan pesan tidak diubah."],
+      ["Dua komputer berbeda ID jaringan dan hanya terhubung ke satu switch. Agar bisa berkomunikasi, mereka membutuhkan...", ["Router", "Kabel yang lebih panjang", "Repeater", "Printer"], "Beda ID jaringan berarti beda gang, jadi perlu router sebagai penghubung."],
+      ["Kabel jenis apa yang dipakai untuk menghubungkan dua laptop secara langsung?", ["Cross-over", "Straight-through", "Fiber optik tunggal", "Kabel USB"], "Cross-over (T568A ke T568B) menghubungkan dua perangkat sejenis."]
+    ];
+    var Z = {qs: [], q: 0, s: 0};
+    function zAsk() {
+      var x = Z.qs[Z.q]; $("zFb").innerHTML = "";
+      $("zQ").textContent = "Soal " + (Z.q + 1) + " dari " + Z.qs.length + ": " + x[0];
+      $("zBtns").innerHTML = "";
+      shuf(x[1]).forEach(function (o) {var b = document.createElement("button"); b.textContent = o; b.onclick = function () {zAns(o === x[1][0])}; $("zBtns").appendChild(b);});
+      $("zScore").textContent = "Skor: " + Z.s;
+    }
+    function zAns(ok) {
+      var x = Z.qs[Z.q]; if (ok) Z.s++;
+      $("zFb").innerHTML = '<div class="fb ' + (ok ? "ok" : "no") + '"><b>' + (ok ? "Jawaban Benar! 🎉 " : "Belum Tepat 😅 ") + "Jawaban yang benar: " + x[1][0] + ".</b> " + x[2] + "</div>";
+      var last = Z.q === Z.qs.length - 1, b = document.createElement("button"); b.className = "on";
+      b.textContent = last ? "Lihat Hasil Kuis" : "Soal Selanjutnya";
+      $("zBtns").innerHTML = ""; $("zNext").innerHTML = ""; $("zNext").appendChild(b);
+      b.onclick = function () {if (last) {$("zQ").textContent = "Kuis Telah Selesai! Skor pencapaianmu: " + Z.s + " dari total " + Z.qs.length + (Z.s === Z.qs.length ? ". Sempurna, pertahankan prestasimu!" : ". Mari pelajari ulang konsepnya."); $("zBtns").innerHTML = ""; $("zFb").innerHTML = ""; $("zNext").innerHTML = "";} else {Z.q++; $("zNext").innerHTML = ""; zAsk();} };
+      $("zScore").textContent = "Skor: " + Z.s;
+    }
+    $("zStart").onclick = function () {Z.qs = shuf(QB).slice(0, 10); Z.q = 0; Z.s = 0; $("zNext").innerHTML = ""; $("zBox").classList.remove("hide"); zAsk();};
+
+    /* Kelas IPv4 */
+    var KM = 'sw';
+    function fmt(n) {return [n >>> 24, (n >>> 16) & 255, (n >>> 8) & 255, n & 255].join('.')}
+    function cl(n) {var o = n >>> 24; return o === 0 ? '-' : o < 127 ? 'A' : o === 127 ? 'L' : o < 192 ? 'B' : o < 224 ? 'C' : o < 240 ? 'D' : 'E'}
+    function dm(c) {return c === 'A' ? 0xFF000000 : c === 'B' ? 0xFFFF0000 : c === 'C' ? 0xFFFFFF00 : null}
+    function pre(m) {var c = 0, i; for (i = 31; i >= 0; i--) {if ((m >>> i) & 1) c++; else break;} return c}
+    function kind(n) {var o = n >>> 24, s = (n >>> 16) & 255; if (n === 0xFFFFFFFF) return 'Broadcast terbatas'; if (o === 127) return 'Loopback (komputer itu sendiri)'; if (o === 10 || (o === 172 && s >= 16 && s <= 31) || (o === 192 && s === 168)) return 'Privat (tidak dirutekan di internet)'; if (o === 169 && s === 254) return 'APIPA (otomatis saat DHCP gagal)'; if (o >= 224 && o <= 239) return 'Multicast'; if (o >= 240) return 'Cadangan atau eksperimen'; return 'Publik';}
+    function kChk() {
+      var n = ip2n($('kIp').value), rows = [], st, i, b = '';
+      if (n === null) {$('kOut').innerHTML = '<p class="note">Ketik alamat IPv4 yang valid, misalnya 172.16.5.9.</p>'; $('kBin').innerHTML = ''; return;}
+      var c = cl(n), m = dm(c), p = m ? pre(m) : 0;
+      rows.push(['Kelas', c === 'L' ? 'Loopback (127.x.x.x), bukan kelas untuk komputer biasa' : c === '-' ? '0.x.x.x tidak valid' : 'Kelas ' + c]);
+      rows.push(['Jenis', kind(n)]);
+      if (m) {
+        var net = nt(n, m), bc = (net | ((~m) >>> 0)) >>> 0;
+        rows.push(['Mask default', fmt(m) + ' (/' + p + ')'], ['ID jaringan', fmt(net)], ['ID host', fmt((n & ~m) >>> 0)], ['Broadcast', fmt(bc)], ['Rentang host', fmt(net + 1) + ' sampai ' + fmt(bc - 1)], ['Jumlah host', (Math.pow(2, 32 - p) - 2).toLocaleString('id-ID')]);
+        st = n === net ? 'Alamat jaringan: tidak boleh dipakai komputer.' : n === bc ? 'Alamat broadcast: tidak boleh dipakai komputer.' : 'Bisa dipakai sebagai alamat host.';
+      } else st = 'Tidak bisa dipakai sebagai alamat komputer biasa.';
+      rows.push(['Status', st]);
+      $('kOut').innerHTML = '<div class="scroll"><table><tbody>' + rows.map(function (r) {return '<tr><th>' + r[0] + '</th><td>' + r[1] + '</td></tr>'}).join('') + '</tbody></table></div>';
+      for (i = 0; i < 32; i++) {b += '<span class="' + (i < p ? 'nb' : 'hb') + '">' + ((n >>> (31 - i)) & 1) + '</span>' + (i % 8 === 7 && i < 31 ? '.' : '');}
+      $('kBin').innerHTML = b + '<div class="note" style="font-family:inherit">Biru: bit ID jaringan. Abu-abu: bit ID host.</div>';
+    }
+    function kRd(p) {var x = {ip: $(p + 'Ip').value.trim(), ms: $(p + 'Mk').value.trim(), gw: $(p + 'Gw').value.trim()}; x.n = ip2n(x.ip); x.m = ip2n(x.ms); x.g = x.gw ? ip2n(x.gw) : null; return x}
+    function hostChk(x, nm) {
+      if (x.n === null) return nm + ': format IP tidak valid.';
+      if (x.m === null || !maskOk(x.ms)) return nm + ': subnet mask tidak valid (harus deret angka 1 lalu 0).';
+      var c = cl(x.n);
+      if (c === 'L') return nm + ': 127.x.x.x adalah loopback. Hanya dipakai komputer itu sendiri, tidak bisa untuk berkomunikasi antar komputer.';
+      if (c === 'D') return nm + ': alamat Kelas D (224 sampai 239) khusus multicast, bukan alamat satu komputer.';
+      if (c === 'E') return nm + ': alamat Kelas E (240 sampai 255) dicadangkan untuk eksperimen dan tidak dipakai di komputer.';
+      if (c === '-') return nm + ': alamat 0.x.x.x tidak valid sebagai alamat komputer.';
+      var net = nt(x.n, x.m), bc = (net | ((~x.m) >>> 0)) >>> 0;
+      if (x.n === net) return nm + ': ' + x.ip + ' adalah alamat jaringan (bagian host semuanya 0), tidak boleh dipakai komputer.';
+      if (x.n === bc) return nm + ': ' + x.ip + ' adalah alamat broadcast (bagian host semuanya 1), tidak boleh dipakai komputer.';
+      return null;
+    }
+    function kSend(x, y, xs, ys, xn, yn, rt, L) {
+      var bad = function (w, f, s) {L.push([w, 'bad']); return {ok: false, why: w, fix: f, st: s}};
+      var xl = nt(x.n, x.m), yl = nt(y.n, x.m), local = xl === yl;
+      L.push([xn + ' menghitung ID jaringan: IP tujuan ' + y.ip + ' dengan mask ' + x.ms + ' menjadi ' + fmt(yl) + ', sedangkan ID jaringan sendiri ' + fmt(xl) + '. ' + (local ? 'SAMA, jadi dikirim langsung.' : 'BEDA, jadi harus lewat gateway.'), 'info']);
+      if (local) {
+        if (xs !== ys) return bad('Paket dikirim langsung (ARP broadcast), tetapi ' + yn + ' berada di sisi lain router dan broadcast tidak menyeberangi router. Kedua PC memakai ID jaringan yang sama padahal dipisahkan router.', 'Beri tiap sisi router ID jaringan yang berbeda.', 1);
+        L.push([yn + ' menjawab dan paket sampai lewat switch tanpa router.', 'ok']); return {ok: true, st: 2};
+      }
+      if (!x.gw) return bad(xn + ' tidak punya gateway, sehingga paket ke jaringan lain tidak punya jalan keluar.', KM === 'rt' ? 'Isi gateway dengan IP router di sisi ' + xn + '.' : 'Beri kedua PC ID jaringan yang sama, atau hubungkan lewat router dan isi gateway.', 0);
+      if (x.g === null) return bad('Alamat gateway ' + xn + ' tidak valid.', 'Ketik IP gateway yang benar.', 0);
+      if (KM !== 'rt') return bad('Gateway ' + x.gw + ' tidak menjawab karena tidak ada router. Kedua PC hanya terhubung ke satu switch, dan switch tidak bisa menghubungkan dua jaringan yang berbeda.', 'Beri kedua PC ID jaringan yang sama, atau pakai router.', 1);
+      if (nt(x.g, x.m) !== xl) return bad('Gateway ' + x.gw + ' berada di jaringan yang berbeda dari ' + xn + ' (ID jaringan ' + fmt(nt(x.g, x.m)) + '), sehingga tidak terjangkau.', 'Gateway harus satu jaringan dengan PC, yaitu ' + rt[xs].ip + '.', 0);
+      if (x.g !== rt[xs].n) return bad('Tidak ada perangkat ber-IP ' + x.gw + ' di jaringan ini. IP router di sisi ini adalah ' + rt[xs].ip + ', jadi ARP ke gateway tidak dijawab.', 'Ganti gateway menjadi ' + rt[xs].ip + '.', 1);
+      L.push([xn + ' mengirim paket ke gateway ' + x.gw + ' dan router menjawab.', 'ok']);
+      var op = rt[ys], dn = nt(op.n, op.m);
+      if (nt(y.n, op.m) !== dn) return bad('Router tidak punya rute ke ' + y.ip + '. Jaringan yang terhubung di sisi tujuan adalah ' + fmt(dn) + '.', 'Pakai IP tujuan yang ID jaringannya ' + fmt(dn) + '.', 1);
+      L.push(['Router: ' + y.ip + ' ada di jaringan ' + fmt(dn) + ', diteruskan lewat port ' + op.ip + '. ' + yn + ' menerima paket.', 'ok']);
+      return {ok: true, st: 2};
+    }
+    function ipPort(id) {var n = ip2n($(id).value), c = n === null ? '-' : cl(n); if (c !== 'A' && c !== 'B' && c !== 'C') return null; return {ip: $(id).value.trim(), n: n, m: dm(c)}}
+    function kSim() {
+      var A = kRd('ka'), B = kRd('kb'), L = [], res = null, e = hostChk(A, 'PC A') || hostChk(B, 'PC B'), sB = KM === 'rt' ? 2 : 1, rt = null;
+      if (e) {L.push([e, 'bad']); res = {ok: false, why: e, fix: 'Pakai alamat host Kelas A, B, atau C yang valid (bukan alamat jaringan, broadcast, loopback, atau multicast).', st: 0, who: 'A'};}
+      else if (A.n === B.n) {e = 'IP PC A dan PC B sama (IP bentrok). Dua perangkat tidak boleh memakai alamat yang sama.'; L.push([e, 'bad']); res = {ok: false, why: e, fix: 'Beri IP yang berbeda.', st: 1, who: 'A'};}
+      else {
+        [[A, 'PC A'], [B, 'PC B']].forEach(function (z) {var d = dm(cl(z[0].n)); if (z[0].m !== d) L.push([z[1] + ': mask ' + z[0].ms + ' berbeda dari mask default Kelas ' + cl(z[0].n) + ' (' + fmt(d) + '). Jaringan yang dilihat PC ini jadi lebih luas atau lebih sempit dari aturan kelasnya.', 'info']);});
+        if (KM === 'rt') {var p1 = ipPort('kr1'), p2 = ipPort('kr2'); if (!p1 || !p2) {e = 'IP port router tidak valid (harus alamat Kelas A, B, atau C).'; L.push([e, 'bad']); res = {ok: false, why: e, fix: 'Isi IP port router yang valid.', st: 1, who: 'A'};} else rt = [0, p1, p2];}
+        if (!res) {
+          L.push(['Permintaan ping: PC A ke PC B', 'h']);
+          res = kSend(A, B, 1, sB, 'PC A', 'PC B', rt, L); res.who = 'A';
+          if (res.ok) {L.push(['Balasan ping: PC B ke PC A', 'h']); var rp = kSend(B, A, sB, 1, 'PC B', 'PC A', rt, L); if (!rp.ok) {rp.why = 'Permintaan sampai, tetapi balasan gagal kembali. ' + rp.why; rp.who = 'B'; res = rp;} }
+        }
+      }
+      $('kRes').className = 'stepbox' + (res.ok ? '' : ' bad');
+      $('kRes').innerHTML = res.ok ? '<b>NYAMBUNG</b><p>' + (KM === 'rt' ? 'Beda ID jaringan: PC mengirim ke gateway, router membaca tujuan dan meneruskannya ke jaringan di sisi lain, lalu balasan kembali lewat jalur yang sama.' : 'ID jaringan kedua PC sama, jadi paket dikirim langsung lewat switch tanpa router.') + '</p>' : '<b>TIDAK NYAMBUNG</b><p>' + res.why + '</p><p><b>Perbaikan:</b> ' + res.fix + '</p>';
+      $('kLog').innerHTML = L.map(function (x) {return '<li class="' + x[1] + '">' + x[0] + '</li>'}).join('');
+      var N = {A: [100, 50, '\uD83D\uDCBB', 'PC A'], M: [360, 50, KM === 'rt' ? '\uD83D\uDCE1' : '\uD83D\uDD00', KM === 'rt' ? 'Router' : 'Switch'], B: [620, 50, '\uD83D\uDCBB', 'PC B']}, c = {A: '', M: '', B: ''}, h = '';
+      if (res.ok) {c.A = c.M = c.B = ' ok';} else if (res.st === 0) c[res.who] = ' bad'; else {c[res.who] = ' ok'; c.M = ' bad';}
+      [['A', 'M'], ['M', 'B']].forEach(function (l) {var on = (c[l[0]] === ' ok' && c[l[1]] !== '') || (c[l[1]] === ' ok' && c[l[0]] !== ''); h += '<line class="ln' + (on ? ' ok' : '') + '" x1="' + N[l[0]][0] + '" y1="50" x2="' + N[l[1]][0] + '" y2="50"/>';});
+      Object.keys(N).forEach(function (k) {var n = N[k]; h += '<g class="nd' + c[k] + '"><circle cx="' + n[0] + '" cy="50" r="28"/><text class="ic" x="' + n[0] + '" y="50">' + n[2] + '</text><text class="lb" x="' + n[0] + '" y="96">' + n[3] + '</text></g>';});
+      $('kSvg').innerHTML = h;
+    }
+    function kMode(m) {KM = m; document.querySelectorAll('#kMode button').forEach(function (b) {b.className = b.dataset.m === m ? 'on' : ''}); $('kRt').classList.toggle('hide', m !== 'rt');}
+    document.querySelectorAll('#kMode button').forEach(function (b) {b.onclick = function () {kMode(b.dataset.m); kSim();}});
+    document.querySelectorAll('#v-kip input:not(#kGuessOn)').forEach(function (e) {e.addEventListener('input', function () {kChk(); kSim();});});
+    /* UX skenario Kelas IPv4 */
+    var KS = [
+      {g: 0, t: 'Satu jaringan Kelas C', s: 'Dua PC, satu switch', d: 'Dua PC memakai alamat Kelas C dan terhubung ke satu switch.', f: 'Dua PC bisa langsung berkomunikasi jika ID jaringannya sama.', y: 'Ubah oktet ketiga IP PC B menjadi 2, lalu lihat apa yang berubah.', m: 'sw', a: ['192.168.1.10', '255.255.255.0', ''], b: ['192.168.1.20', '255.255.255.0', ''], r: ['192.168.1.1', '192.168.2.1'], k: ['kaIp', 'kbIp']},
+      {g: 0, t: 'Satu jaringan Kelas A', s: 'Mask 255.0.0.0', d: 'Dua PC memakai alamat Kelas A (10.x.x.x) dengan mask default /8.', f: 'Pada Kelas A hanya oktet pertama yang menjadi ID jaringan, jadi 10.1.1.5 dan 10.200.3.4 masih satu jaringan.', y: 'Ubah IP PC B menjadi 11.200.3.4 dan lihat hasilnya.', m: 'sw', a: ['10.1.1.5', '255.0.0.0', ''], b: ['10.200.3.4', '255.0.0.0', ''], r: ['192.168.1.1', '192.168.2.1'], k: ['kaIp', 'kbIp', 'kaMk']},
+      {g: 1, t: 'Beda jaringan tanpa router', s: '192.168.1.x dan 192.168.2.x', d: 'PC A di jaringan 192.168.1.0 dan PC B di 192.168.2.0, hanya dihubungkan satu switch.', f: 'Switch hanya mengantar paket di dalam satu jaringan, ibarat petugas yang hanya bertugas di satu gang. Beda ID jaringan (beda gang) membutuhkan router.', y: 'Ubah IP PC B menjadi 192.168.1.20 agar satu jaringan.', m: 'sw', a: ['192.168.1.10', '255.255.255.0', ''], b: ['192.168.2.20', '255.255.255.0', ''], r: ['192.168.1.1', '192.168.2.1'], k: ['kaIp', 'kbIp']},
+      {g: 1, t: 'Beda jaringan dengan router', s: 'Gateway terisi benar', d: 'Dua jaringan dihubungkan router. Tiap PC mengarahkan gateway ke IP router di sisinya.', f: 'Untuk keluar jaringan, PC mengirim ke gateway, lalu router meneruskan ke jaringan tujuan.', y: 'Kosongkan gateway PC A dan lihat apa yang gagal.', m: 'rt', a: ['192.168.1.10', '255.255.255.0', '192.168.1.1'], b: ['192.168.2.20', '255.255.255.0', '192.168.2.1'], r: ['192.168.1.1', '192.168.2.1'], k: ['kaGw', 'kbGw', 'kr1', 'kr2']},
+      {g: 1, t: 'ID jaringan sama dipisah router', s: 'Router tidak bisa menolong', d: 'Kedua PC punya ID jaringan yang sama, tetapi berada di dua sisi router yang berbeda.', f: 'PC mengira tujuan satu jaringan lalu mengirim langsung (broadcast), dan broadcast tidak menyeberangi router.', y: 'Ubah IP PC B menjadi 192.168.2.20, lalu gateway PC B dan IP router sisi B menjadi 192.168.2.1.', m: 'rt', a: ['192.168.1.10', '255.255.255.0', '192.168.1.1'], b: ['192.168.1.20', '255.255.255.0', '192.168.1.2'], r: ['192.168.1.1', '192.168.1.2'], k: ['kaIp', 'kbIp']},
+      {g: 2, t: 'Mask tidak sesuai kelas', s: 'Mask PC A terlalu lebar', d: 'PC A memakai mask 255.255.0.0 (mask Kelas B) pada IP Kelas C, sedangkan PC B memakai mask default.', f: 'Mask yang berbeda membuat dua PC menilai ID jaringan secara berbeda, sehingga hasil tiap arah bisa berbeda.', y: 'Ubah mask PC A menjadi 255.255.255.0.', m: 'sw', a: ['192.168.1.10', '255.255.0.0', ''], b: ['192.168.2.20', '255.255.255.0', ''], r: ['192.168.1.1', '192.168.2.1'], k: ['kaMk']},
+      {g: 2, t: 'Gateway salah', s: 'IP gateway tidak ada', d: 'Gateway PC A diisi 192.168.1.254, padahal IP router di sisi itu adalah 192.168.1.1.', f: 'Gateway harus berupa IP router yang benar-benar ada di jaringan yang sama dengan PC.', y: 'Perbaiki gateway PC A menjadi 192.168.1.1.', m: 'rt', a: ['192.168.1.10', '255.255.255.0', '192.168.1.254'], b: ['192.168.2.20', '255.255.255.0', '192.168.2.1'], r: ['192.168.1.1', '192.168.2.1'], k: ['kaGw']},
+      {g: 2, t: 'Kelas A dan C bercampur', s: '10.x.x.x dengan 192.168.x.x', d: 'PC A memakai alamat Kelas A dan PC B memakai alamat Kelas C pada satu switch.', f: 'Kelas berbeda berarti ID jaringan berbeda. Tanpa router, keduanya tidak bisa berkomunikasi.', y: 'Ubah kedua PC menjadi 192.168.1.x dengan mask 255.255.255.0.', m: 'sw', a: ['10.0.0.5', '255.0.0.0', ''], b: ['192.168.1.5', '255.255.255.0', ''], r: ['192.168.1.1', '192.168.2.1'], k: ['kaIp', 'kbIp']},
+      {g: 3, t: 'Alamat broadcast', s: '192.168.1.255', d: 'PC B diberi alamat 192.168.1.255.', f: 'Bagian host yang semuanya 1 adalah alamat broadcast dan tidak boleh dipakai komputer.', y: 'Ubah menjadi 192.168.1.254.', m: 'sw', a: ['192.168.1.10', '255.255.255.0', ''], b: ['192.168.1.255', '255.255.255.0', ''], r: ['192.168.1.1', '192.168.2.1'], k: ['kbIp']},
+      {g: 3, t: 'Alamat Kelas D', s: '224.0.0.5', d: 'PC B diberi alamat 224.0.0.5.', f: 'Kelas D untuk multicast, bukan alamat satu komputer.', y: 'Pakai alamat Kelas C yang valid, misalnya 192.168.1.30.', m: 'sw', a: ['192.168.1.10', '255.255.255.0', ''], b: ['224.0.0.5', '255.255.255.0', ''], r: ['192.168.1.1', '192.168.2.1'], k: ['kbIp']}
+    ];
+    var KGN = ['\uD83C\uDF31 Level 1: Dasar, satu jaringan', '\uD83D\uDEA6 Level 2: Antar jaringan', '\uD83D\uDD27 Level 3: Salah konfigurasi', '\uD83D\uDEAB Level 4: Alamat terlarang'], KGL = ['Dasar, satu jaringan', 'Antar jaringan', 'Salah konfigurasi', 'Alamat terlarang'], KC = -1, KPend = false, KF = ['kaIp', 'kaMk', 'kaGw', 'kbIp', 'kbMk', 'kbGw', 'kr1', 'kr2'];
+    function kClearFb() {var f = $('kGfb'); f.textContent = ''; f.className = 'guess-fb'}
+    function kVals() {return KM + '|' + KF.map(function (i) {return $(i).value.trim()}).join('|')}
+    function kSv(s) {return s.m + '|' + s.a.concat(s.b, s.r).join('|')}
+    function kBuild() {
+      var h = '';
+      KGN.forEach(function (n, g) {h += '<h4>' + n + '</h4><div class="scg">' + KS.map(function (s, i) {return s.g === g ? '<button class="sc" data-i="' + i + '" aria-pressed="false"><b>' + s.t + '</b><small>' + s.s + '</small></button>' : ''}).join('') + '</div>';});
+      $('kCards').innerHTML = h;
+      $('kCards').querySelectorAll('.sc').forEach(function (b) {b.onclick = function () {kLoad(+b.dataset.i, true)}});
+    }
+    function kLoad(i, scroll) {
+      var s = KS[i], v = s.a.concat(s.b, s.r); KC = i; kMode(s.m);
+      KF.forEach(function (id, j) {$(id).value = v[j]});
+      KPend = $('kGuessOn').checked; kClearFb(); kSim();
+      if (scroll) {var t = $('kInfo'); t.scrollIntoView({behavior: window.matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth', block: 'start'});}
+    }
+    function kInf(p) {
+      var n = ip2n($(p + 'Ip').value), mk = $(p + 'Mk').value.trim(), c, t;
+      if (n === null) t = 'Format alamat IP belum valid.';
+      else {
+        c = cl(n);
+        if (c === 'A' || c === 'B' || c === 'C') {var m = (ip2n(mk) !== null && maskOk(mk)) ? ip2n(mk) : dm(c); t = '<b>Kelas ' + c + '</b> | ID jaringan (nama gang): ' + fmt(nt(n, m));}
+        else t = 'Bukan alamat Kelas A, B, atau C untuk komputer (' + (c === 'L' ? 'loopback' : c === 'D' ? 'multicast' : c === 'E' ? 'cadangan' : 'tidak valid') + ').';
+      }
+      $(p + 'Info').innerHTML = t;
+    }
+    function kExtra() {
+      var s = KS[KC], dirty = !!s && kVals() !== kSv(s), A = kRd('ka'), B = kRd('kb'), h, bad = $('kRes').classList.contains('bad');
+      document.querySelectorAll('.sc').forEach(function (b) {var on = +b.dataset.i === KC; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false');});
+      $('kInfo').innerHTML = s ? '<div class="ki-head"><span class="ki-level">Level ' + (s.g + 1) + ' · ' + KGL[s.g] + '</span><b>' + s.t + '</b>' + (dirty ? ' <span class="tag no">nilai diubah</span>' : '') + '</div>' +
+        '<div class="ki-row"><b>📌 Situasi</b><span>' + s.d + '</span></div>' +
+        '<div class="ki-row"><b>🎯 Fokus belajar</b><span>' + s.f + '</span></div>' +
+        '<div class="ki-row"><b>🧪 Coba</b><span>' + s.y + '</span></div>' :
+        '<div class="ki-head"><b>Konfigurasi bebas</b></div><div class="ki-row"><b>Langkah</b><span>Pilih salah satu skenario di atas untuk mulai.</span></div>';
+      $('kReset').disabled = !dirty;
+      KF.forEach(function (id) {$(id).classList.remove('flag', 'badf')});
+      if (s && !KPend) s.k.forEach(function (id) {$(id).classList.add('flag'); if (bad) $(id).classList.add('badf');});
+      if (A.n !== null && A.m !== null && B.n !== null && B.m !== null && maskOk(A.ms) && maskOk(B.ms)) {
+        var a1 = nt(A.n, A.m), b1 = nt(B.n, A.m), b2 = nt(B.n, B.m), a2 = nt(A.n, B.m), t = function (x, y) {return '<span class="tag ' + (x === y ? 'ok' : 'no') + '">' + (x === y ? 'SAMA' : 'BEDA') + '</span>'};
+        h = '<div class="nc-title">🔎 Perbandingan ID jaringan</div>' +
+          '<div class="nc-row"><span class="nc-side">Menurut PC A</span><span class="nc-flow">ID A <b>' + fmt(a1) + '</b> vs ID B <b>' + fmt(b1) + '</b></span>' + t(a1, b1) + '</div>' +
+          '<div class="nc-row"><span class="nc-side">Menurut PC B</span><span class="nc-flow">ID B <b>' + fmt(b2) + '</b> vs ID A <b>' + fmt(a2) + '</b></span>' + t(b2, a2) + '</div>' +
+          '<small class="nc-note">' + (KM === 'rt' ? 'Dua jaringan dengan router: kedua PC ada di sisi berbeda, jadi ID jaringan yang SAMA justru bermasalah.' : 'Satu switch: kedua PC butuh ID jaringan yang SAMA agar bisa langsung berkomunikasi.') + '</small>';
+      } else h = '<div class="nc-title">🔎 Perbandingan ID jaringan</div><div class="nc-flow" style="padding-top:7px">Isi IP dan subnet mask yang valid untuk melihat perbandingan.</div>';
+      $('kNet').innerHTML = h; kInf('ka'); kInf('kb');
+      var modeOn = $('kGuessOn').checked;
+      $('kModeBar').classList.toggle('on', modeOn);
+      $('kModeHint').textContent = modeOn ? 'Hasil dikunci sampai kamu menebak. Setelah menebak, kamu bebas bereksperimen.' : 'Hasil langsung terlihat. Aktifkan untuk menebak dulu sebelum hasil dibuka.';
+      $('kStep3').innerHTML = '<span>3</span> ' + (KPend ? 'Tebak dulu, lalu lihat hasil' : 'Hasil ping');
+      $('kResWrap').classList.toggle('hide', KPend); $('kGuess').classList.toggle('hide', !KPend);
+      $('kLocked').classList.toggle('hide', !KPend);
+      if (KPend) kClearFb();
+    }
+    var _ks = kSim; kSim = function () {_ks(); kExtra();};
+    $('kGuess').querySelectorAll('button').forEach(function (b) {
+      b.onclick = function () {
+        var ok = !$('kRes').classList.contains('bad'), g = b.dataset.g === '1', good = g === ok, f = $('kGfb');
+        KPend = false; kExtra();
+        f.className = 'guess-fb ' + (good ? 'good' : 'bad');
+        f.innerHTML = (good ? '<b>✅ Tepat!</b> Jawabanmu benar: ' : '<b>❌ Belum tepat.</b> Hasil sebenarnya: ') + (ok ? 'kedua PC nyambung.' : 'kedua PC tidak nyambung.') + (good ? ' Lihat alasan dan log di bawah.' : ' Pelajari alasan di bawah, lalu coba lagi.<button type="button" class="retry" id="kRetry">🔁 Coba tebak lagi</button>');
+        if (!good) $('kRetry').onclick = function () {KPend = true; kClearFb(); kExtra(); $('kGuess').scrollIntoView({block: 'nearest'});};
+        $('kResWrap').scrollIntoView({block: 'nearest'});
+      };
+    });
+    $('kReset').onclick = function () {if (KC >= 0) kLoad(KC, false);};
+    $('kGuessOn').addEventListener('change', function () {KPend = this.checked; kClearFb(); kExtra();});
+    document.querySelectorAll('#v-kip input:not(#kGuessOn),#kMode button').forEach(function (e) {e.addEventListener(e.tagName === 'BUTTON' ? 'click' : 'input', function () {kClearFb(); kExtra();});});
+    kBuild(); kLoad(0, false);
+
+    /* Game: XP, level, lencana */
+    var P = {xp: 0, done: {}, name: '', pjRuns: 0};
+    var LV = ['Pemula', 'Teknisi Muda', 'Master Jaringan', 'Network Engineer', 'Legenda Jaringan'];
+    function pc(pre) {return Object.keys(P.done).filter(function (k) {return k.indexOf(pre) === 0}).length}
+    var BG = [
+      {k: 'explorer', e: '\uD83E\uDDED', t: 'Penjelajah Materi', d: 'Buka semua 8 kartu materi', f: function () {return pc('m_') >= 8}},
+      {k: 'montir', e: '\uD83D\uDD27', t: 'Montir Topologi', d: 'Uji 3 topologi', f: function () {return pc('t_') >= 3}},
+      {k: 'detektif', e: '\uD83D\uDD75\uFE0F', t: 'Detektif IP', d: 'Tebak benar 3 skenario IP', f: function () {return pc('ipg_') >= 3}},
+      {k: 'kurir', e: '\uD83D\uDCE6', t: 'Kurir Paket', d: 'Selesaikan perjalanan paket normal', f: function () {return !!P.done.pj_normal}},
+      {k: 'master', e: '\uD83C\uDFC6', t: 'Master Kuis', d: 'Skor 8 ke atas di kuis', f: function () {return !!P.done.quiz_master}},
+      {k: 'legend', e: '\uD83D\uDC51', t: 'Master Jaringan', d: 'Kumpulkan lima lencana lainnya', f: function () {return BG.slice(0, 5).every(function (b) {return P.done['b_' + b.k]})}}
+    ];
+    function lvl() {return Math.min(Math.floor(P.xp / 100) + 1, LV.length)}
+    function pLoad() {
+      try {var s = localStorage.getItem('netlab_quest'); if (s) {var o = JSON.parse(s); if (o && typeof o.xp === 'number' && o.done) P = o;} } catch (e) { }
+      if (typeof P.name !== 'string') P.name = ''; else P.name = P.name.slice(0, 24);
+      if (typeof P.pjRuns !== 'number') P.pjRuns = Object.keys(P.done || {}).filter(function (k) {return k.indexOf('pj_') === 0}).length;
+      P.pjRuns = Math.min(P.pjRuns, 3);
+    }
+    function pSave() {try {localStorage.setItem('netlab_quest', JSON.stringify(P))} catch (e) { } }
+    var tT = null;
+    function toast(m) {var t = $('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(tT); tT = setTimeout(function () {t.classList.remove('show')}, 2600);}
+    var MS = [
+      {k: 'materi', e: '\uD83D\uDCDA', n: 'Materi', goal: 'Buka 8 kartu materi', cur: function () {return Math.min(pc('m_'), 8)}, max: 8, hint: 'Klik tiap kartu materi di bawah sampai semuanya terbuka.'},
+      {k: 'topo', e: '\uD83D\uDD78\uFE0F', n: 'Topologi', goal: 'Matikan perangkat di 3 topologi yang berbeda', cur: function () {return Math.min(pc('t_'), 3)}, max: 3, hint: 'Pilih topologi, lalu klik sebuah perangkat untuk mematikannya.'},
+      {k: 'kip', e: '\uD83D\uDD0C', n: 'Simulasi IP', goal: 'Coba 3 skenario IP', cur: function () {return Math.min(pc('ipv_'), 3)}, max: 3, hint: 'Klik kartu skenario. Tebakan benar memberi XP ekstra.'},
+      {k: 'pj', e: '\uD83D\uDCE6', n: 'Packet Journey', goal: 'Jalankan 3 simulasi paket sampai langkah terakhir', cur: function () {return Math.min(P.pjRuns || 0, 3)}, max: 3, hint: 'Pilih skenario, lalu jalankan sampai langkah terakhir. Ulangi sampai 3 kali.'},
+      {k: 'kuis', e: '\uD83D\uDCDD', n: 'Kuis', goal: 'Selesaikan 10 soal kuis sampai hasil akhir tampil', cur: function () {return P.done.quiz_done ? 1 : 0}, max: 1, hint: 'Jawab semua soal. Skor 8 ke atas memberi lencana Master Kuis.'}
+    ];
+    MS.forEach(function (m) {var d = document.querySelector('#v-' + m.k + ' .mission > div'); if (d) d.insertAdjacentHTML('beforeend', '<div class="mprog" id="mp_' + m.k + '"></div>');});
+    function allDone() {return MS.every(function (m) {return P.done['ms_' + m.k]})}
+    /* Efek kertas dan percikan */
+    var FX = {ps: [], raf: 0, ctx: null};
+    function spawn(kind, n) {
+      var w = window.innerWidth, h = window.innerHeight, cols = ['#ffb703', '#ff5d8f', '#3b5bff', '#08c58a', '#8b5cf6', '#ffffff', '#ff8c42'], i;
+      for (i = 0; i < n && FX.ps.length < 650; i++) {
+        var p = {col: cols[(Math.random() * cols.length) | 0], rot: Math.random() * 6.28, vr: (Math.random() - .5) * .3, ph: Math.random() * 6, life: 0, s: 7 + Math.random() * 8, t: Math.random() < .78 ? 'p' : 's', g: .22}, a, sp;
+        if (kind === 'L' || kind === 'R') {a = -Math.PI * (.28 + Math.random() * .22); sp = 13 + Math.random() * 11; p.x = kind === 'L' ? -10 : w + 10; p.y = h * .85; p.vx = Math.cos(a) * sp * (kind === 'L' ? 1 : -1); p.vy = Math.sin(a) * sp;}
+        else if (kind === 'T') {p.x = Math.random() * w; p.y = -20; p.vx = (Math.random() - .5) * 2; p.vy = 2 + Math.random() * 3; p.g = .04;}
+        else {a = Math.random() * 6.283; sp = 4 + Math.random() * 9; p.x = w / 2; p.y = h * .3; p.vx = Math.cos(a) * sp; p.vy = Math.sin(a) * sp - 3; p.g = .18;}
+        p.max = p.t === 'p' ? 150 + Math.random() * 90 : 40 + Math.random() * 30;
+        FX.ps.push(p);
+      }
+      if (!FX.raf) FX.raf = requestAnimationFrame(fxStep);
+    }
+    function fxStep() {
+      var c = FX.ctx, w = window.innerWidth, h = window.innerHeight; c.clearRect(0, 0, w, h);
+      FX.ps = FX.ps.filter(function (p) {return p.life < p.max && p.y < h + 40});
+      FX.ps.forEach(function (p) {
+        p.life++; p.vy += p.g; p.vx *= .99; p.vy *= .99; p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+        c.save(); c.translate(p.x, p.y); c.rotate(p.rot); c.globalAlpha = Math.max(0, Math.min(1, (p.max - p.life) / 30)); c.fillStyle = p.col;
+        if (p.t === 'p') {c.scale(1, Math.cos(p.life * .2 + p.ph)); c.fillRect(-p.s / 2, -p.s * .3, p.s, p.s * .6);}
+        else {c.globalCompositeOperation = 'lighter'; c.beginPath(); c.arc(0, 0, p.s * .35, 0, 6.283); c.fill();}
+        c.restore();
+      });
+      FX.raf = FX.ps.length ? requestAnimationFrame(fxStep) : 0;
+      if (!FX.raf) c.clearRect(0, 0, w, h);
+    }
+    function burst(big) {
+      if (window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+      var c = $('fx'), dpr = window.devicePixelRatio || 1;
+      c.width = window.innerWidth * dpr; c.height = window.innerHeight * dpr; FX.ctx = c.getContext('2d'); FX.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      if (!big) {spawn('C', 90); return;}
+      [0, 450, 900, 1500, 2100].forEach(function (t, i) {setTimeout(function () {spawn('L', 45); spawn('R', 45); spawn('T', i < 3 ? 40 : 20); spawn('C', i === 0 ? 60 : 25);}, t);});
+    }
+    /* Kartu pencapaian */
+    var mdT = null;
+    function hideCard() {$('mdone').classList.remove('show'); clearTimeout(mdT);}
+    function showCard(kind, e, t, p, btns) {
+      var d = $('mdone'), b = $('mdB'); clearTimeout(mdT);
+      $('mdE').textContent = e; $('mdT').textContent = t; $('mdP').textContent = p; b.innerHTML = '';
+      (btns || []).forEach(function (x) {var el = document.createElement('button'); el.textContent = x[0]; if (x[2]) el.className = 'on'; el.onclick = x[1]; b.appendChild(el);});
+      d.className = 'mdone ' + kind; void d.offsetWidth; d.classList.add('show');
+      if (kind === 'small') mdT = setTimeout(hideCard, 6500);
+    }
+    function finale() {
+      if (AU) AU.finale();
+      var nb = BG.filter(function (b) {return P.done['b_' + b.k]}).length;
+      burst(true);
+      showCard('big', '\uD83C\uDFC6', 'Semua misi selesai!', 'Kamu resmi jadi Master Jaringan! Total ' + P.xp + ' XP, Level ' + lvl() + ' (' + LV[lvl() - 1] + '), dan ' + nb + ' lencana.', [['\uD83D\uDCE4 Bagikan pencapaian', function () {hideCard(); shOpen();}, 1], ['Lanjut belajar', hideCard], ['Ulangi dari awal', function () {hideCard(); resetP();}]]);
+    }
+    function missionDone(i) {
+      var m = MS[i];
+      if (allDone()) {P.done.finale = 1; pSave(); finale(); return;}
+      if (AU) AU.mission();
+      burst(false);
+      showCard('small', '\uD83C\uDF89', 'Misi ' + (i + 1) + ' selesai!', m.n + ': ' + m.goal + '. Bonus +25 XP!', []);
+    }
+    function resetP() {
+      P = {xp: 0, done: {}, name: P.name || '', pjRuns: 0}; pSave(); hideCard();
+      document.querySelectorAll('#v-materi details').forEach(function (d) {d.open = false;});
+      document.querySelectorAll('#v-topo details,#v-kip details,#v-pj details').forEach(function (d) {d.open = true;});
+      T.k = 'star'; T.f = {}; tpDraw();
+      $('kGuessOn').checked = false; KPend = false; kLoad(0, false);
+      S.scn = 'normal'; $('dom').value = 'www.sekolahku.sch.id';
+      document.querySelectorAll('#scn button').forEach(function (b) {b.classList.toggle('on', b.dataset.s === 'normal')});
+      load();
+      $('chBox').classList.add('hide'); $('chBtns').innerHTML = ''; $('chFb').innerHTML = ''; $('chNext').innerHTML = '';
+      $('zBox').classList.add('hide'); $('zBtns').innerHTML = ''; $('zFb').innerHTML = ''; $('zNext').innerHTML = ''; Z.q = 0; Z.s = 0; Z.qs = [];
+      pRender(); tab('materi'); toast('Progres direset ke awal');
+    }
+    function pRender() {
+      var l = lvl(), inl = P.xp % 100, full = l >= LV.length, n = 0;
+      $('pLv').textContent = 'Lv ' + l; $('pTitle').textContent = LV[l - 1];
+      $('pBar').style.width = (full ? 100 : inl) + '%';
+      $('pXp').textContent = P.xp + ' XP' + (full ? ' \u00B7 level maksimal' : ' \u00B7 ' + (100 - inl) + ' XP lagi ke level berikutnya');
+      $('pBadges').innerHTML = BG.map(function (b) {var g = P.done['b_' + b.k]; return '<span class="bd' + (g ? ' got' : '') + '" title="' + b.t + ': ' + b.d + '" aria-label="' + b.t + (g ? ' (didapat)' : ' (belum): ' + b.d) + '">' + b.e + '</span>'}).join('');
+      $('pMs').innerHTML = MS.map(function (m, i) {var c = m.cur(), ok = c >= m.max; if (ok) n++; return '<li class="' + (ok ? 'ok' : '') + '"><button data-t="' + m.k + '" aria-label="Misi ' + (i + 1) + ': ' + m.n + ', ' + (ok ? 'selesai' : c + ' dari ' + m.max) + '"><span>' + m.e + '</span><b>Misi ' + (i + 1) + ': ' + m.n + '</b><em>' + (ok ? '\u2713 Selesai' : c + ' / ' + m.max) + '</em></button></li>'}).join('');
+      MS.forEach(function (m) {var c = m.cur(), ok = c >= m.max, el = $('mp_' + m.k); if (!el) return; el.className = 'mprog' + (ok ? ' ok' : ''); el.innerHTML = '<div class="g">\uD83C\uDFAF Tujuan: ' + m.goal + '</div><div class="bar"><i style="width:' + Math.round(c / m.max * 100) + '%"></i></div><small>' + (ok ? '\u2705 Misi selesai! Bonus +25 XP sudah kamu dapat.' : c + ' dari ' + m.max + ' \u00B7 ' + m.hint) + '</small>'; el.parentNode.parentNode.classList.toggle('ok', ok);});
+      document.querySelectorAll('#tabs button').forEach(function (b) {var m = MS.filter(function (x) {return x.k === b.dataset.t})[0]; b.setAttribute('data-done', m && m.cur() >= m.max ? '1' : '0')});
+      $('pFxBtn').hidden = n < MS.length; nxRender();
+    }
+
+    /* ============ Audio: musik ceria, efek XP/lencana/misi/finale, tombol suara ============ */
+    var AU = (function () {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      var ctx = null, master = null, music = null, filter = null, sfx = null, send = null, perc = null, noise = null;
+      var timer = 0, barAt = 0, bar = 0, enabled = true, b = null;
+      var BEAT = 60 / 112, BAR = BEAT * 4;
+      /* Progresi ceria: C - G - Am - F - C - G - F - G */
+      var PROG = [
+        [48, 55, 64, 67, 72],
+        [43, 50, 59, 62, 67],
+        [45, 52, 60, 64, 69],
+        [41, 48, 57, 60, 65],
+        [48, 55, 64, 67, 72],
+        [43, 50, 59, 62, 67],
+        [41, 48, 57, 60, 65],
+        [43, 50, 59, 62, 67]
+      ];
+      var PLUCK = [2, 3, 4, 3, 2, 3, 4, 1];
+
+      function freq(m) {return 440 * Math.pow(2, (m - 69) / 12);}
+      function pref() {try {return localStorage.getItem('netlab_sound') !== 'off';} catch (e) {return true;}}
+      function save() {try {localStorage.setItem('netlab_sound', enabled ? 'on' : 'off');} catch (e) { }}
+
+      function ensure() {
+        if (ctx) {
+          if (ctx.state === 'suspended') {var r = ctx.resume(); if (r && r.catch) r.catch(function () {});}
+          return true;
+        }
+        if (!AC) return false;
+        try {
+          ctx = new AC();
+          master = ctx.createGain(); master.gain.value = enabled ? .9 : 0;
+          var comp = ctx.createDynamicsCompressor();
+          comp.threshold.value = -20; comp.knee.value = 18; comp.ratio.value = 4; comp.attack.value = .006; comp.release.value = .28;
+          master.connect(comp); comp.connect(ctx.destination);
+          filter = ctx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 5200; filter.Q.value = .45;
+          music = ctx.createGain(); music.gain.value = .9; filter.connect(music); music.connect(master);
+          sfx = ctx.createGain(); sfx.gain.value = .65; sfx.connect(master);
+          perc = ctx.createGain(); perc.gain.value = .55; perc.connect(master);
+          var delay = ctx.createDelay(1), fb = ctx.createGain(), wet = ctx.createGain();
+          delay.delayTime.value = .28; fb.gain.value = .2; wet.gain.value = .18;
+          send = ctx.createGain(); send.gain.value = .3;
+          send.connect(delay); delay.connect(fb); fb.connect(delay); delay.connect(wet); wet.connect(filter);
+          noise = ctx.createBuffer(1, Math.floor(ctx.sampleRate * .4), ctx.sampleRate);
+          var nd = noise.getChannelData(0);
+          for (var i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
+          return true;
+        } catch (e) {ctx = null; return false;}
+      }
+
+      function tone(f, at, dur, vol, type, sendAmt, attack, release) {
+        if (!ctx) return;
+        var o = ctx.createOscillator(), g = ctx.createGain();
+        var a = attack == null ? .03 : attack, r = release == null ? Math.min(dur * .5, .8) : release;
+        var peak = Math.max(vol, .0002), hold = Math.max(at + a + .02, at + dur - r);
+        o.type = type || 'sine'; o.frequency.setValueAtTime(f, at);
+        g.gain.setValueAtTime(.0001, at);
+        g.gain.exponentialRampToValueAtTime(peak, at + a);
+        g.gain.setValueAtTime(peak, hold);
+        g.gain.exponentialRampToValueAtTime(.0001, at + dur);
+        o.connect(g); g.connect(filter);
+        if (sendAmt) {var s = ctx.createGain(); s.gain.value = sendAmt; g.connect(s); s.connect(send);}
+        o.start(at); o.stop(at + dur + .05);
+      }
+
+      function ramp(param, value, dur) {
+        if (!ctx || !param) return;
+        var t = ctx.currentTime;
+        try {
+          if (param.cancelAndHoldAtTime) param.cancelAndHoldAtTime(t);
+          else {param.cancelScheduledValues(t); param.setValueAtTime(param.value, t);}
+          param.linearRampToValueAtTime(value, t + dur);
+        } catch (e) { }
+      }
+
+      function pad(m, at, dur, vol) {
+        tone(freq(m), at, dur, vol, 'sine', 0, .35, .8);
+        tone(freq(m) * 1.003, at, dur, vol * .45, 'triangle', 0, .45, .95);
+      }
+
+      function pluck(m, at, vol) {
+        tone(freq(m), at, .42, vol, 'triangle', .28, .004, .29);
+        tone(freq(m) * 2, at, .24, vol * .22, 'sine', .2, .004, .18);
+      }
+
+      function lead(m, at, dur, vol) {
+        tone(freq(m), at, dur, vol, 'triangle', .34, .02, .22);
+        tone(freq(m) * 2, at, dur * .8, vol * .22, 'sine', .24, .02, .18);
+      }
+
+      function bass(m, at, dur, vol) {
+        tone(freq(m), at, dur, vol, 'triangle', 0, .015, .28);
+        tone(freq(m) * 2, at, dur, vol * .22, 'sine', 0, .015, .2);
+      }
+
+      function kick(at, vol) {
+        if (!ctx || !perc) return;
+        var o = ctx.createOscillator(), g = ctx.createGain();
+        o.type = 'sine';
+        o.frequency.setValueAtTime(130, at);
+        o.frequency.exponentialRampToValueAtTime(48, at + .12);
+        g.gain.setValueAtTime(.0001, at);
+        g.gain.exponentialRampToValueAtTime(Math.max(vol, .0002), at + .006);
+        g.gain.exponentialRampToValueAtTime(.0001, at + .18);
+        o.connect(g); g.connect(perc); o.start(at); o.stop(at + .22);
+      }
+
+      function shaker(at, vol) {
+        if (!ctx || !perc || !noise) return;
+        var s = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
+        s.buffer = noise;
+        f.type = 'highpass'; f.frequency.value = 6000;
+        g.gain.setValueAtTime(.0001, at);
+        g.gain.exponentialRampToValueAtTime(Math.max(vol, .0002), at + .004);
+        g.gain.exponentialRampToValueAtTime(.0001, at + .055);
+        s.connect(f); f.connect(g); g.connect(perc); s.start(at); s.stop(at + .07);
+      }
+
+      function scheduleBar(at, n) {
+        var ch = PROG[n % PROG.length], i, m;
+        for (i = 1; i < 4; i++) pad(ch[i], at, BAR * 1.02, .018);
+        bass(ch[0], at, .52, .019);
+        bass(ch[0], at + BEAT * 2, .52, .019);
+        if (n % 2 === 1) bass(ch[0] + 7, at + BEAT * 3.5, .34, .012);
+        for (i = 0; i < 8; i++) {
+          m = ch[PLUCK[i]];
+          pluck(m + 12, at + i * BEAT / 2, i % 2 ? .0095 : .0125);
+        }
+        var L = n % 2 === 0 ?
+          [[0, 4, .65], [1.5, 3, .4], [2, 2, .6], [3, 4, .45]] :
+          [[0, 3, .45], [1, 4, .35], [2.5, 2, .65], [3.5, 3, .4]];
+        for (i = 0; i < L.length; i++) lead(ch[L[i][1]] + 12, at + L[i][0] * BEAT, L[i][2] * BEAT, .018);
+        kick(at, .055); kick(at + BEAT * 2, .042);
+        for (i = 0; i < 8; i++) shaker(at + i * BEAT / 2, i % 2 ? .006 : .01);
+      }
+
+      function tick() {
+        if (!ctx || !enabled) return;
+        while (barAt < ctx.currentTime + 1.2) {scheduleBar(barAt, bar); bar++; barAt += BAR;}
+      }
+
+      function start() {
+        if (!enabled || !ctx || timer || document.visibilityState === 'hidden') return;
+        if (ctx.state === 'suspended') {var r = ctx.resume(); if (r && r.catch) r.catch(function () {});}
+        ramp(music.gain, .9, 1.2);
+        bar = 0; barAt = ctx.currentTime + .12; tick(); timer = setInterval(tick, 250);
+      }
+
+      function stop() {
+        if (timer) {clearInterval(timer); timer = 0;}
+        ramp(music.gain, .0001, .35);
+      }
+
+      function render() {
+        if (!b) return;
+        var label = enabled ? 'Matikan musik dan efek suara' : 'Nyalakan musik dan efek suara';
+        b.textContent = enabled ? '\uD83D\uDD0A' : '\uD83D\uDD07';
+        b.classList.toggle('off', !enabled);
+        b.setAttribute('aria-pressed', enabled ? 'true' : 'false');
+        b.setAttribute('aria-label', label); b.title = label;
+      }
+
+      function set(on) {
+        enabled = !!on; save();
+        if (enabled) {
+          if (!ensure()) {enabled = false; save(); render(); return;}
+          ramp(master.gain, .9, .12);
+          start();
+        } else {
+          ramp(master.gain, 0, .12);
+          stop();
+        }
+        render();
+      }
+
+      function unlock(e) {
+        if (e && e.target && e.target.closest && e.target.closest('#aFab')) return;
+        if (!enabled) return;
+        if (!ensure()) return;
+        if (!timer) start();
+      }
+
+      function ready() {
+        if (!enabled || !ensure()) return false;
+        if (ctx.state === 'suspended') {var r = ctx.resume(); if (r && r.catch) r.catch(function () {});}
+        return true;
+      }
+
+      function sfxTone(f, at, dur, vol, type, attack, release) {
+        if (!ctx) return;
+        var o = ctx.createOscillator(), g = ctx.createGain();
+        var a = attack == null ? .006 : attack, r = release == null ? Math.min(dur * .6, .25) : release;
+        var peak = Math.max(vol, .0002), hold = Math.max(at + a + .01, at + dur - r);
+        o.type = type || 'sine'; o.frequency.setValueAtTime(f, at);
+        g.gain.setValueAtTime(.0001, at);
+        g.gain.exponentialRampToValueAtTime(peak, at + a);
+        g.gain.setValueAtTime(peak, hold);
+        g.gain.exponentialRampToValueAtTime(.0001, at + dur);
+        o.connect(g); g.connect(sfx); o.start(at); o.stop(at + dur + .04);
+      }
+
+      function sfxNoise(at, dur, vol, hp) {
+        if (!ctx || !noise) return;
+        var s = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
+        s.buffer = noise; s.loop = true;
+        f.type = 'highpass'; f.frequency.value = hp || 4500;
+        g.gain.setValueAtTime(.0001, at);
+        g.gain.exponentialRampToValueAtTime(Math.max(vol, .0002), at + .012);
+        g.gain.exponentialRampToValueAtTime(.0001, at + dur);
+        s.connect(f); f.connect(g); g.connect(sfx); s.start(at); s.stop(at + dur + .02);
+      }
+
+      function sfxThump(at, vol) {
+        if (!ctx) return;
+        var o = ctx.createOscillator(), g = ctx.createGain();
+        o.type = 'sine';
+        o.frequency.setValueAtTime(150, at);
+        o.frequency.exponentialRampToValueAtTime(45, at + .14);
+        g.gain.setValueAtTime(.0001, at);
+        g.gain.exponentialRampToValueAtTime(Math.max(vol, .0002), at + .008);
+        g.gain.exponentialRampToValueAtTime(.0001, at + .3);
+        o.connect(g); g.connect(sfx); o.start(at); o.stop(at + .34);
+      }
+
+      function sfxXp() {
+        if (!ready()) return;
+        var t = ctx.currentTime + .06;
+        sfxTone(freq(84), t, .2, .08, 'triangle', .004, .14);
+        sfxTone(freq(88), t + .055, .28, .058, 'sine', .004, .2);
+        sfxTone(freq(96), t + .11, .16, .018, 'sine', .004, .1);
+      }
+
+      function sfxChallenge() {
+        if (!ready()) return;
+        var t = ctx.currentTime + .01, seq = [76, 83, 88], i;
+        for (i = 0; i < seq.length; i++) sfxTone(freq(seq[i]), t + i * .05, .26, .07, 'triangle', .004, .17);
+        sfxTone(freq(96), t + .17, .32, .024, 'sine', .006, .24);
+      }
+
+      function sfxBadge() {
+        if (!ready()) return;
+        var t = ctx.currentTime + .16, seq = [84, 88, 91, 96], i;
+        for (i = 0; i < seq.length; i++) {
+          sfxTone(freq(seq[i]), t + i * .07, .55, .082, 'triangle', .006, .4);
+          sfxTone(freq(seq[i]) * 2, t + i * .07, .3, .021, 'sine', .006, .22);
+        }
+        sfxNoise(t, .55, .011, 7000);
+      }
+
+      function sfxMission() {
+        if (!ready()) return;
+        var t = ctx.currentTime + .38, seq = [72, 76, 79, 84], i;
+        for (i = 0; i < seq.length; i++) {
+          sfxTone(freq(seq[i]), t + i * .105, .75, .095, 'triangle', .008, .55);
+          sfxTone(freq(seq[i]) * 2, t + i * .105, .35, .022, 'sine', .008, .25);
+        }
+        sfxTone(freq(48), t, .95, .045, 'sine', .008, .7);
+        sfxTone(freq(84), t + .42, 1.2, .055, 'sine', .02, .9);
+        sfxNoise(t + .42, .5, .014, 5200);
+      }
+
+      function sfxFinale() {
+        if (!ready()) return;
+        var t = ctx.currentTime + .4, times = [0, .5, 1, 1.5, 2], chords = [
+          [60, 64, 67, 72], [55, 59, 62, 67], [57, 60, 64, 69], [53, 57, 60, 65], [60, 64, 67, 72, 76, 79]
+        ], run = [72, 76, 79, 84, 88, 91, 96], i, j, last;
+        for (i = 0; i < times.length; i++) {
+          last = i === times.length - 1;
+          sfxThump(t + times[i], last ? .1 : .065);
+          sfxNoise(t + times[i], last ? 1.4 : .45, last ? .04 : .022, 4200);
+          for (j = 0; j < chords[i].length; j++) sfxTone(freq(chords[i][j]), t + times[i], last ? 1.6 : .45, last ? .055 : .045, 'triangle', .008, last ? 1.1 : .3);
+        }
+        for (i = 0; i < run.length; i++) {
+          sfxTone(freq(run[i]), t + i * .075, .42, .055, 'triangle', .004, .3);
+          sfxTone(freq(run[i]) * 2, t + i * .075, .2, .012, 'sine', .004, .15);
+        }
+        sfxTone(freq(48), t, 1.2, .045, 'sine', .008, .9);
+        sfxTone(freq(55), t + 1, 1.2, .04, 'sine', .008, .9);
+        sfxTone(freq(60), t + 2, 1.8, .04, 'sine', .01, 1.4);
+      }
+
+      function init() {
+        b = $('aFab');
+        if (!AC || !b) {if (b) b.hidden = true; return;}
+        enabled = pref(); render();
+        b.addEventListener('click', function () {
+          set(!enabled);
+          toast(enabled ? '\uD83D\uDD0A Musik dan efek suara dinyalakan' : '\uD83D\uDD07 Suara dimatikan');
+        });
+        document.addEventListener('pointerdown', unlock, {passive: true});
+        document.addEventListener('click', unlock);
+        document.addEventListener('keydown', unlock);
+        document.addEventListener('visibilitychange', function () {
+          if (document.visibilityState === 'hidden') stop();
+          else if (enabled && ctx) start();
+        });
+      }
+
+      return {init: init, xp: sfxXp, badge: sfxBadge, mission: sfxMission, finale: sfxFinale, challenge: sfxChallenge, success: sfxMission, toggle: function () {set(!enabled);}};
+    })();
+
+    /* ============ Kartu gambar pencapaian (canvas) ============ */
+    var SH = {blob: null, file: null, url: '', canvas: null};
+    var SF = '"Fredoka","Nunito","Segoe UI",sans-serif', SN = '"Nunito","Segoe UI",sans-serif', SE = '"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';
+    function shRR(c, x, y, w, h, r) {r = Math.min(r, w / 2, h / 2); c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath();}
+    function shFit(c, t, maxW, size, weight, fam) {var s = size; c.font = weight + ' ' + s + 'px ' + fam; while (s > 12 && c.measureText(t).width > maxW) {s--; c.font = weight + ' ' + s + 'px ' + fam;} return s;}
+    function shCanvas() {
+      var c = document.createElement('canvas'); c.width = 1080; c.height = 1350;
+      var g = c.getContext('2d'), l = lvl(), full = l >= LV.length, nb = BG.filter(function (b) {return P.done['b_' + b.k]}).length, i, x, y;
+      var date = new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'});
+      var bg = g.createLinearGradient(0, 0, 1080, 1350); bg.addColorStop(0, '#eef4ff'); bg.addColorStop(1, '#e2e8ff');
+      g.fillStyle = bg; g.fillRect(0, 0, 1080, 1350);
+      g.fillStyle = 'rgba(59,91,255,.075)';
+      for (y = 26; y < 1350; y += 52)for (x = 26; x < 1080; x += 52) {g.beginPath(); g.arc(x, y, 2.6, 0, 6.283); g.fill();}
+      g.save(); g.shadowColor = 'rgba(20,33,61,.18)'; g.shadowBlur = 40; g.shadowOffsetY = 18; g.fillStyle = '#ffffff'; shRR(g, 40, 40, 1000, 1270, 48); g.fill(); g.restore();
+      g.strokeStyle = '#cfdcf2'; g.lineWidth = 4; shRR(g, 40, 40, 1000, 1270, 48); g.stroke();
+      /* Judul */
+      var tg = g.createLinearGradient(90, 90, 520, 130); tg.addColorStop(0, '#3b5bff'); tg.addColorStop(1, '#8b5cf6');
+      g.textAlign = 'left'; g.textBaseline = 'alphabetic'; g.font = '700 62px ' + SF; g.fillStyle = tg; g.fillText('NetLab Quest', 90, 128);
+      g.font = '600 24px ' + SN; g.fillStyle = '#586a8a'; g.fillText('Kartu Pencapaian \u00B7 Belajar Jaringan Komputer', 90, 170);
+      g.textAlign = 'right'; g.font = '600 20px ' + SN; g.fillStyle = '#8a97b5'; g.fillText(date, 990, 128);
+      g.textAlign = 'left';
+      /* Kartu level */
+      var nm = (P.name || '').trim() || 'Siswa NetLab';
+      shRR(g, 90, 205, 900, 210, 28); g.fillStyle = '#f3f7ff'; g.fill(); g.strokeStyle = '#cfdcf2'; g.lineWidth = 3; g.stroke();
+      var lg = g.createLinearGradient(115, 245, 245, 375); lg.addColorStop(0, '#ffd166'); lg.addColorStop(1, '#ffb703');
+      g.beginPath(); g.arc(180, 310, 68, 0, 6.283); g.fillStyle = lg; g.fill(); g.strokeStyle = '#e09a00'; g.lineWidth = 4; g.stroke();
+      g.textAlign = 'center'; g.textBaseline = 'alphabetic'; g.fillStyle = '#3a2a00'; g.font = '700 20px ' + SF; g.fillText('LEVEL', 180, 288);
+      g.font = '700 54px ' + SF; g.fillText(String(l), 180, 339);
+      g.textAlign = 'left'; g.textBaseline = 'alphabetic';
+      g.font = '28px ' + SE; g.fillStyle = '#14213d'; g.fillText('\uD83D\uDC64', 282, 254);
+      g.fillStyle = '#14213d'; shFit(g, nm, 610, 34, '700', SF); g.fillText(nm, 320, 255);
+      g.fillStyle = '#3b5bff'; shFit(g, LV[l - 1], 650, 30, '700', SF); g.fillText(LV[l - 1], 282, 296);
+      g.fillStyle = '#586a8a'; g.font = '600 21px ' + SN; g.fillText('Level ' + l + ' dari ' + LV.length + ' \u00B7 ' + P.xp + ' XP \u00B7 ' + nb + ' lencana', 282, 327);
+      shRR(g, 282, 344, 660, 16, 8); g.fillStyle = '#e4edff'; g.fill(); g.strokeStyle = '#cfdcf2'; g.lineWidth = 2; g.stroke();
+      var pct = full ? 1 : (P.xp % 100) / 100;
+      if (pct > 0) {shRR(g, 282, 344, Math.max(16, 660 * pct), 16, 8); var pg = g.createLinearGradient(282, 0, 942, 0); pg.addColorStop(0, '#08a36f'); pg.addColorStop(1, '#ffb703'); g.fillStyle = pg; g.fill();}
+      g.fillStyle = '#8a97b5'; g.font = '600 18px ' + SN; g.fillText(full ? 'Level maksimal tercapai' : (100 - (P.xp % 100)) + ' XP lagi menuju ' + LV[l], 282, 388);
+      /* Lencana */
+      g.textBaseline = 'alphabetic'; g.font = '32px ' + SE; g.fillStyle = '#14213d'; g.fillText('\uD83C\uDFC5', 90, 466);
+      g.font = '700 31px ' + SF; g.fillText('Koleksi Lencana', 140, 464);
+      var cw = 284, gap = 24;
+      BG.forEach(function (b, bi) {
+        var row = Math.floor(bi / 3), col = bi % 3, got = !!P.done['b_' + b.k];
+        var bx = 90 + col * (cw + gap), by = row ? 604 : 488;
+        shRR(g, bx, by, cw, 100, 18); g.fillStyle = got ? '#fff8e6' : '#f6f8ff'; g.fill(); g.strokeStyle = got ? '#ffb703' : '#dbe4f5'; g.lineWidth = got ? 3 : 2; g.stroke();
+        g.beginPath(); g.arc(bx + 48, by + 50, 34, 0, 6.283); g.fillStyle = got ? '#ffe8a8' : '#eef1f8'; g.fill(); g.strokeStyle = got ? '#ffb703' : '#d5deee'; g.lineWidth = 2; g.stroke();
+        g.textAlign = 'center'; g.textBaseline = 'middle'; g.font = '32px ' + SE; g.globalAlpha = got ? 1 : .32; g.fillText(b.e, bx + 48, by + 54); g.globalAlpha = 1;
+        g.textAlign = 'left'; g.textBaseline = 'alphabetic'; g.fillStyle = got ? '#14213d' : '#8a97b5';
+        shFit(g, b.t, cw - 112, 20, '700', SF); g.fillText(b.t, bx + 94, by + 42);
+        g.fillStyle = got ? '#08a36f' : '#a5aed3'; g.font = '600 16px ' + SN; g.fillText(got ? '\u2713 Didapat' : 'Belum didapat', bx + 94, by + 70);
+      });
+      /* Status misi */
+      g.textBaseline = 'alphabetic'; g.font = '30px ' + SE; g.fillStyle = '#14213d'; g.fillText('\uD83C\uDFAF', 90, 764);
+      g.font = '700 31px ' + SF; g.fillText('Status Misi', 140, 762);
+      g.textAlign = 'right'; g.font = '600 20px ' + SN; g.fillStyle = '#8a97b5'; g.fillText(nb + ' lencana \u00B7 ' + MS.filter(function (m) {return m.cur() >= m.max}).length + '/5 misi selesai', 990, 762);
+      g.textAlign = 'left';
+      MS.forEach(function (m, mi) {
+        var cc = m.cur(), ok = cc >= m.max, ry = 795 + mi * 80;
+        shRR(g, 90, ry, 900, 68, 16); g.fillStyle = ok ? '#e9fbf3' : '#f6f8ff'; g.fill(); g.strokeStyle = ok ? '#08a36f' : '#dbe4f5'; g.lineWidth = ok ? 3 : 2; g.stroke();
+        g.beginPath(); g.arc(132, ry + 34, 24, 0, 6.283); g.fillStyle = ok ? '#c9f5e3' : '#eef1f8'; g.fill();
+        g.textAlign = 'center'; g.textBaseline = 'middle'; g.font = '25px ' + SE; g.fillText(m.e, 132, ry + 36);
+        g.textAlign = 'left'; g.textBaseline = 'alphabetic'; g.fillStyle = '#14213d'; g.font = '700 22px ' + SF; g.fillText('Misi ' + (mi + 1) + ': ' + m.n, 174, ry + 41);
+        g.textAlign = 'right'; g.font = '700 19px ' + SN; g.fillStyle = ok ? '#08a36f' : '#8a97b5'; g.fillText(ok ? '\u2713 Selesai' : cc + ' / ' + m.max, 960, ry + 41);
+      });
+      g.strokeStyle = '#e4edff'; g.lineWidth = 2; g.beginPath(); g.moveTo(90, 1224); g.lineTo(990, 1224); g.stroke();
+      g.textAlign = 'center'; g.textBaseline = 'alphabetic'; g.font = '600 19px ' + SN; g.fillStyle = '#8a97b5';
+      g.fillText('NetLab Quest \u00B7 Belajar Jaringan Komputer \u00B7 ' + date, 540, 1259);
+      return c;
+    }
+    function shClose() {$('share').hidden = true; document.body.style.overflow = '';}
+    function shDownload() {
+      if (!SH.url) return;
+      var a = document.createElement('a'); a.href = SH.url; a.download = 'netlab-quest-pencapaian.png';
+      document.body.appendChild(a); a.click(); a.remove(); toast('Gambar pencapaian diunduh');
+    }
+    function shDoShare() {
+      if (!(navigator.share && navigator.canShare && SH.file)) {shDownload(); return;}
+      try {
+        if (!navigator.canShare({files: [SH.file]})) {shDownload(); return;}
+        navigator.share({files: [SH.file], title: 'Pencapaian NetLab Quest', text: 'Pencapaian ' + ((P.name || '').trim() || 'Siswa NetLab') + ' di NetLab Quest: Level ' + lvl() + ' (' + LV[lvl() - 1] + '), ' + P.xp + ' XP, ' + BG.filter(function (b) {return P.done['b_' + b.k]}).length + ' lencana!'}).catch(function () { });
+      } catch (e) {shDownload();}
+    }
+    function shDataURLBlob(d) {
+      var p = d.split(','), b = atob(p[1]), n = b.length, u = new Uint8Array(n), i;
+      for (i = 0; i < n; i++)u[i] = b.charCodeAt(i);
+      return new Blob([u], {type: 'image/png'});
+    }
+    function shOpen() {
+      var c = shCanvas();
+      SH.canvas = c; SH.url = c.toDataURL('image/png'); SH.blob = null; SH.file = null;
+      try {SH.blob = shDataURLBlob(SH.url); if (window.File) SH.file = new File([SH.blob], 'netlab-quest-pencapaian.png', {type: 'image/png'});} catch (e) { }
+      $('shImg').src = SH.url; $('shShare').hidden = !(navigator.share && navigator.canShare && window.File);
+      $('share').hidden = false; document.body.style.overflow = 'hidden'; $('shClose').focus();
+    }
+    function shShareClick() {
+      if (SH.file) {shDoShare(); return;}
+      if (SH.canvas && SH.canvas.toBlob) {SH.canvas.toBlob(function (b) {SH.blob = b; if (b && window.File) SH.file = new File([b], 'netlab-quest-pencapaian.png', {type: 'image/png'}); shDoShare();}, 'image/png');}
+      else shDownload();
+    }
+    $('pShare').onclick = shOpen;
+    $('shClose').onclick = shClose;
+    $('shDown').onclick = shDownload;
+    $('shShare').onclick = shShareClick;
+    $('share').addEventListener('click', function (e) {if (e.target === this) shClose();});
+    document.addEventListener('keydown', function (e) {if (e.key === 'Escape' && !$('share').hidden) shClose();});
+    function gain(xp, label, key, kind) {
+      if (key) {if (P.done[key]) return; P.done[key] = 1;}
+      var l0 = lvl(), fin = [], gotBadge = false; P.xp += xp;
+      var msg = (xp ? '+' + xp + ' XP \u00B7 ' : '') + label;
+      BG.forEach(function (b) {if (!P.done['b_' + b.k] && b.f()) {P.done['b_' + b.k] = 1; gotBadge = true; msg = '\uD83C\uDFC5 Lencana baru: ' + b.t + '!';} });
+      MS.forEach(function (m, i) {if (!P.done['ms_' + m.k] && m.cur() >= m.max) {P.done['ms_' + m.k] = 1; P.xp += 25; fin.push(i);} });
+      if (lvl() > l0) msg = '\uD83C\uDF89 Naik level! Kamu sekarang ' + LV[lvl() - 1];
+      if (AU) {
+        if (kind === 'challenge') AU.challenge(); else if (xp > 0) AU.xp();
+        if (gotBadge) AU.badge();
+      }
+      toast(msg); pSave(); pRender();
+      if (fin.length) missionDone(fin[fin.length - 1]);
+    }
+    document.querySelectorAll('#v-materi details').forEach(function (d, i) {d.addEventListener('toggle', function () {if (d.open) gain(10, 'Belajar kartu materi ' + (i + 1), 'm_' + i);});});
+    var _td = tpDraw; tpDraw = function () {_td(); if (Object.keys(T.f).length) gain(10, 'Menguji ' + TP[T.k].n, 't_' + T.k);};
+    var _kl = kLoad; kLoad = function (i, s) {_kl(i, s); if (s !== false) gain(5, 'Menjelajah skenario IP', 'ipv_' + i);};
+    $('kGuess').querySelectorAll('button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var ok = !$('kRes').classList.contains('bad'), g = b.dataset.g === '1';
+        if (g === ok) gain(15, 'Tebakan jitu, detektif!', 'ipg_' + KC, 'challenge'); else gain(3, 'Salah juga bagian dari belajar', 'ipw_' + KC);
+      });
+    });
+    var _sh = show; show = function (i) {
+      var r = _sh(i);
+      if (i === S.steps.length - 1 && !S.doneRun) {
+        S.doneRun = true;
+        P.pjRuns = Math.min((P.pjRuns || 0) + 1, 3); pSave();
+        var key = 'pj_' + S.scn;
+        if (P.done[key]) {
+          var fin = [];
+          MS.forEach(function (m, mi) {if (!P.done['ms_' + m.k] && m.cur() >= m.max) {P.done['ms_' + m.k] = 1; P.xp += 25; fin.push(mi);} });
+          pSave(); pRender();
+          if (fin.length) missionDone(fin[fin.length - 1]);
+          else toast('Simulasi paket ' + P.pjRuns + ' / 3 selesai');
+        } else {
+          gain(S.scn === 'normal' ? 20 : 10, 'Perjalanan paket selesai (' + P.pjRuns + '/3)', 'pj_' + S.scn);
+        }
+      }
+      return r;
+    };
+    var _an = answer; answer = function (ok) {_an(ok); if (ok) gain(5, 'Tebakan langkah paket benar', null, 'challenge');};
+    var _za = zAns; zAns = function (ok) {
+      _za(ok); if (ok) gain(5, 'Jawaban benar!', null, 'challenge');
+      if (Z.q === Z.qs.length - 1) {gain(20, 'Kuis selesai', 'quiz_done'); if (Z.s >= 8) gain(0, 'Skor ' + Z.s + ' dari 10', 'quiz_master');}
+    };
+    /* Bantuan */
+    var HF = {opener: null};
+    function hsec(k, t, html, o) {return '<details id="h_' + k + '"' + (o === k ? ' open' : '') + '><summary>' + t + '</summary>' + html + '</details>'}
+    function hmis(k) {var m = MS.filter(function (x) {return x.k === k})[0], c = m.cur(); return '<p><b>Tujuan:</b> ' + m.goal + '.</p>';}
+    function hst(k) {var m = MS.filter(function (x) {return x.k === k})[0], c = m.cur(); return '<p><b>Status kamu:</b> ' + (c >= m.max ? '\u2705 Misi selesai' : '\u23F3 ' + c + ' dari ' + m.max) + '</p>';}
+    function helpHTML(o) {
+      var h = '';
+      h += hsec('umum', '\uD83C\uDFAE Cara bermain singkat', '<ol><li>Ada <b>5 misi</b>. Pilih lewat tombol bernomor di bagian atas atau lewat daftar misi di kartu pemain.</li><li>Setiap kali kamu belajar atau mencoba sesuatu, kamu dapat <b>XP</b>. XP mengisi bar level.</li><li>Selesaikan misi untuk dapat <b>bonus 25 XP</b> dan animasi perayaan.</li><li>Kumpulkan <b>6 lencana</b>. Jika kelima lencana pertama lengkap, kamu dapat mahkota \uD83D\uDC51.</li><li>Tidak ada urutan wajib, tetapi urutan 1 sampai 5 paling mudah: baca materi dulu, lalu coba simulasinya.</li><li>Progresmu tersimpan otomatis di browser ini.</li></ol><p>Buka bagian lain di bawah untuk panduan tiap misi.</p>', o);
+      h += hsec('materi', '\uD83D\uDCDA Misi 1: Materi', hmis('materi') + '<p><b>Cara main:</b></p><ol><li>Klik judul sebuah kartu untuk membukanya.</li><li>Baca kotak \uD83D\uDCD6 Intinya, \uD83E\uDDE9 Analogi, dan \uD83D\uDCA1 Contoh.</li><li>Lanjut ke \uD83D\uDCCC Materi ringkas di bawahnya (pengertian, jenis, tabel).</li><li>Tombol di akhir kartu membawamu ke simulasi yang berkaitan.</li></ol><p><b>XP:</b> +10 untuk tiap kartu yang pertama kali dibuka.</p>' + hst('materi'), o);
+      h += hsec('topo', '\uD83D\uDD78\uFE0F Misi 2: Simulasi Topologi', hmis('topo') + '<p><b>Cara main:</b></p><ol><li>Pilih satu topologi: Bus, Ring, Star, Mesh, atau Hybrid.</li><li>Klik sebuah perangkat (lingkaran atau kabel utama) untuk mematikannya. Warnanya jadi merah. Klik lagi untuk menyalakan.</li><li>Lihat angka <i>komputer saling terhubung</i> dan kalimat hasilnya.</li><li>Ulangi di topologi lain. Bandingkan kelebihan dan kekurangannya di kotak bawah.</li></ol><p><b>Tips:</b> matikan Switch pada Star, lalu satu PC pada Mesh. Bandingkan hasilnya.</p><p><b>XP:</b> +10 untuk tiap topologi yang pertama kali kamu uji.</p>' + hst('topo'), o);
+      h += hsec('kip', '\uD83D\uDD0C Misi 3: Simulasi IP', hmis('kip') + '<p><b>Cara main:</b></p><ol><li><b>Pilih skenario</b> di kartu bergrup Level 1 sampai 4. Baca kotak Situasi, Fokus belajar, dan Coba.</li><li><b>Periksa konfigurasi.</b> Kolom bergaris tebal adalah fokus skenario. Kotak perbandingan ID jaringan menunjukkan SAMA atau BEDA menurut tiap PC.</li><li><b>Baca hasil.</b> NYAMBUNG atau TIDAK NYAMBUNG, lengkap dengan alasan, perbaikan, dan log langkah demi langkah.</li></ol><p><b>Mode tebak:</b> aktifkan sakelar <i>Mode tebak</i>, pilih skenario, lalu periksa konfigurasi. Hasil dikunci sampai kamu memilih <b>Nyambung</b> atau <b>Tidak nyambung</b> di Langkah 3. Setelah menebak, kamu bisa bereksperimen dengan isian; tombol <i>Coba tebak lagi</i> mengunci ulang hasil untuk tebakan berikutnya.</p><p><b>Mengubah nilai:</b> ketik di kolom IP, mask, atau gateway. Di luar mode tebak, hasil langsung berubah tanpa tombol kirim. Tombol <i>Kembalikan ke nilai skenario</i> memulihkan isian awal.</p><p><b>Tips:</b> satu switch butuh ID jaringan yang sama. Beda ID jaringan butuh router dan gateway yang benar.</p><p><b>XP:</b> +5 tiap skenario baru, +15 untuk tebakan benar, +3 untuk tebakan salah.</p>' + hst('kip'), o);
+      h += hsec('pj', '\uD83D\uDCE6 Misi 4: Packet Journey', hmis('pj') + '<p><b>Cara main:</b></p><ol><li>Ketik alamat situs (bebas) lalu pilih skenario: Jaringan normal, DNS mati, Router ISP putus, atau Server mati.</li><li>Tekan <b>Putar</b> untuk otomatis, atau <b>Maju</b> dan <b>Mundur</b> untuk satu langkah. Daftar Urutan langkah bisa diklik untuk loncat.</li><li>Lihat titik data bergerak, panel Isi paket di tiap lapisan, dan penjelasan tiap langkah.</li><li>Selesaikan sampai langkah terakhir (langkah ke-9 pada jaringan normal).</li></ol><p><b>Syarat misi:</b> jalankan minimal <b>3 simulasi paket</b> sampai langkah terakhir. Boleh skenario apa saja, termasuk mengulang, lalu cek hitungan di kartu misi.</p><p><b>Mode tantangan:</b> tebak langkah berikutnya. Tombol soal berikutnya muncul di bawah penjelasan.</p><p><b>XP:</b> +20 untuk jaringan normal selesai, +10 tiap skenario gangguan, +5 tiap tebakan langkah benar.</p>' + hst('pj'), o);
+      h += hsec('kuis', '\uD83D\uDCDD Misi 5: Kuis', hmis('kuis') + '<p><b>Cara main:</b></p><ol><li>Tekan <b>Mulai kuis</b>. Soal diambil acak dari 31 soal.</li><li>Pilih satu jawaban, lalu baca penjelasannya.</li><li>Tekan <b>Soal berikutnya</b> (di bawah penjelasan) sampai hasil akhir tampil.</li></ol><p><b>Tips:</b> skor 8 ke atas memberi lencana \uD83C\uDFC6 Master Kuis. Kuis boleh diulang.</p><p><b>XP:</b> +5 tiap jawaban benar dan +20 saat kuis selesai pertama kali.</p>' + hst('kuis'), o);
+      h += hsec('xp', '\u2B50 XP dan level', '<table><thead><tr><th>Aksi</th><th>XP</th></tr></thead><tbody><tr><td>Membuka kartu materi (pertama kali)</td><td>+10</td></tr><tr><td>Menguji topologi baru</td><td>+10</td></tr><tr><td>Mencoba skenario IP baru</td><td>+5</td></tr><tr><td>Tebakan IP benar / salah</td><td>+15 / +3</td></tr><tr><td>Packet Journey selesai (normal / gangguan)</td><td>+20 / +10</td></tr><tr><td>Tebakan langkah paket benar</td><td>+5</td></tr><tr><td>Jawaban kuis benar</td><td>+5</td></tr><tr><td>Kuis selesai</td><td>+20</td></tr><tr><td>Menyelesaikan satu misi</td><td>+25</td></tr></tbody></table><p>Level naik tiap 100 XP: ' + LV.map(function (n, i) {return 'Lv ' + (i + 1) + ' ' + n + (i ? ' (' + (i * 100) + ' XP)' : '')}).join(', ') + '.</p><p>Kebanyakan aksi hanya memberi XP sekali. Jawaban kuis benar dan tebakan langkah paket benar bisa terus menambah XP.</p>', o);
+      h += hsec('lencana', '\uD83C\uDFC5 Lencana dan mahkota: cara mendapatkan semuanya', '<table><thead><tr><th></th><th>Lencana</th><th>Syarat singkat</th><th>Status</th></tr></thead><tbody>' + BG.map(function (b) {return '<tr><td>' + b.e + '</td><td>' + b.t + '</td><td>' + b.d + '</td><td>' + (P.done['b_' + b.k] ? '\u2705' : '\u2B1C') + '</td></tr>'}).join('') + '</tbody></table><p><b>Langkah lengkap tiap lencana:</b></p><ol><li><b>\uD83E\uDDED Penjelajah Materi:</b> buka tab Materi, lalu klik kedelapan kartu (A sampai H) satu per satu. Cek penghitung 0 sampai 8 di Misi 1.</li><li><b>\uD83D\uDD27 Montir Topologi:</b> buka tab Topologi, pilih satu topologi, lalu klik sebuah perangkat sampai berwarna merah. Ganti ke topologi lain dan ulangi sampai tiga topologi berbeda (misalnya Star, Bus, dan Mesh).</li><li><b>\uD83D\uDD75\uFE0F Detektif IP:</b> buka tab Simulasi IP, aktifkan Mode tebak, pilih skenario, lalu tebak Nyambung atau Tidak nyambung di Langkah 3. Kamu butuh 3 tebakan benar di 3 skenario berbeda. Kalau salah, klik <i>Coba tebak lagi</i> atau pilih skenario lain. Petunjuknya ada di Situasi, Fokus belajar, dan kotak perbandingan ID jaringan.</li><li><b>\uD83D\uDCE6 Kurir Paket:</b> buka tab Packet Journey, pilih Jaringan normal, lalu tekan Putar atau Maju sampai langkah ke-9, yaitu Browser menampilkan halaman.</li><li><b>\uD83C\uDFC6 Master Kuis:</b> buka tab Kuis, tekan Mulai kuis, dan jawab 10 soal dengan skor minimal 8 dalam satu percobaan. Kalau belum berhasil, ulangi. Soal diacak dari 31 soal dan penjelasan tiap soal membantumu belajar.</li><li><b>\uD83D\uDC51 Master Jaringan (mahkota):</b> muncul otomatis setelah kelima lencana di atas terkumpul.</li></ol><p><b>Urutan tercepat:</b> Materi, Topologi, Simulasi IP dengan Mode tebak, Packet Journey, lalu Kuis.</p>', o);
+      h += hsec('share', '\uD83D\uDCE4 Membagikan pencapaian', '<p>Klik <b>Bagikan hasil</b> di kartu pemain untuk membuat gambar pencapaian. Gambar berisi nama, level, XP, koleksi lencana, dan status misi seperti di bar samping.</p><p>Isi kolom <b>Nama di gambar bagikan</b> pada kartu pemain. Kalau dikosongkan, gambar memakai nama <i>Siswa NetLab</i>.</p><p>Di HP, tombol <b>Bagikan</b> membuka menu bagikan bawaan (WhatsApp, Instagram, dan lainnya). Di komputer, gambar akan diunduh sebagai file PNG.</p><p>Tombol bagikan juga muncul di popup saat semua misi selesai.</p>', o);
+      h += hsec('faq', '\u2754 Tanya jawab', '<p><b>Hasil simulasi IP berubah sendiri saat saya mengetik?</b><br>Di mode biasa, betul: tidak ada tombol kirim dan hasil langsung diperbarui. Di mode tebak, hasil tetap dikunci sampai kamu menebak.</p><p><b>XP tidak bertambah?</b><br>Tiap aksi hanya memberi XP sekali. Cek bar tujuan di banner misi untuk melihat yang belum dikerjakan.</p><p><b>Progres hilang?</b><br>Progres tersimpan di browser yang sama. Menghapus data browser atau memakai mode penyamaran akan menghapusnya.</p><p><b>Mau mengulang dari awal?</b><br>Tekan <i>Reset progres</i> di kartu pemain.</p><p><b>Tabel terpotong di HP?</b><br>Geser tabelnya ke samping.</p><p><b>Animasi mengganggu?</b><br>Aktifkan pengaturan kurangi gerakan di perangkatmu. Efek kertas akan dilewati.</p><p><b>Tidak ada suara?</b><br>Klik tombol <b>🔊</b> di kanan bawah. Musik ceria mulai setelah kamu berinteraksi dengan halaman. Setiap XP, lencana, misi, dan finale punya efek suara sendiri. Tombol yang sama mematikan atau menyalakan musik dan efek suara.</p>', o);
+      return h;
+    }
+    function openHelp(k) {
+      k = k || 'umum'; HF.opener = document.activeElement;
+      $('hBody').innerHTML = helpHTML(k); $('help').hidden = false;
+      document.body.style.overflow = 'hidden';
+      var el = $('h_' + k); if (el && el.scrollIntoView) el.scrollIntoView({block: 'nearest'});
+      $('hClose').focus();
+    }
+    function closeHelp() {
+      $('help').hidden = true;
+      document.body.style.overflow = '';
+      try {localStorage.setItem('netlab_help', '1')} catch (e) { }
+      if (HF.opener && HF.opener.focus) HF.opener.focus();
+    }
+    $('hBtn').onclick = function () {openHelp('umum')};
+    $('hClose').onclick = closeHelp;
+    $('help').addEventListener('click', function (e) {if (e.target === this) closeHelp();});
+    document.addEventListener('keydown', function (e) {
+      if ($('help').hidden) return;
+      if (e.key === 'Escape') {closeHelp(); return;}
+      if (e.key === 'Tab') {
+        var f = $('help').querySelectorAll('button,summary'), a = f[0], z = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === a) {e.preventDefault(); z.focus();}
+        else if (!e.shiftKey && document.activeElement === z) {e.preventDefault(); a.focus();}
+      }
+    });
+    document.addEventListener('click', function (e) {var b = e.target.closest && e.target.closest('[data-h]'); if (b) openHelp(b.dataset.h);});
+    MS.forEach(function (m) {var d = document.querySelector('#v-' + m.k + ' .mission > div'); if (d) d.insertAdjacentHTML('beforeend', '<button class="mini hl" data-h="' + m.k + '">\u2753 Cara main misi ini</button>');});
+    try {localStorage.setItem('netlab_t', '1'); if (!localStorage.getItem('netlab_help')) setTimeout(function () {if (P.xp === 0) openHelp('umum')}, 500);} catch (e) { }
+    /* Tema dan misi berikutnya */
+    function themeDark() {var t = document.documentElement.getAttribute('data-theme'); return t ? t === 'dark' : window.matchMedia('(prefers-color-scheme:dark)').matches}
+    function themeRender() {var d = themeDark(), b = $('tBtn'); b.textContent = d ? '\u2600\uFE0F Mode terang' : '\uD83C\uDF19 Mode gelap'; b.setAttribute('aria-pressed', d ? 'true' : 'false');}
+    function themeSet(t) {document.documentElement.setAttribute('data-theme', t); try {localStorage.setItem('netlab_theme', t)} catch (e) { } themeRender();}
+    $('tBtn').onclick = function () {themeSet(themeDark() ? 'light' : 'dark');};
+    try {window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change', themeRender);} catch (e) { }
+    themeRender();
+    function nextM(i) {return MS[i + 1] || MS.filter(function (x) {return x.cur() < x.max})[0] || null}
+    MS.forEach(function (m) {var v = $('v-' + m.k); if (v) v.insertAdjacentHTML('beforeend', '<div class="nextm hide" id="nx_' + m.k + '"></div>');});
+    function nxRender() {
+      var all = MS.every(function (x) {return x.cur() >= x.max});
+      MS.forEach(function (m, i) {
+        var el = $('nx_' + m.k); if (!el) return; var ok = m.cur() >= m.max; el.classList.toggle('hide', !ok); if (!ok) return;
+        var nx = nextM(i), h = '<div><b>\u2705 Misi ' + (i + 1) + ' selesai!</b><p>';
+        if (all) h += 'Semua misi sudah selesai. Kamu hebat!</p></div><button class="on" data-fin="1">\uD83C\uDF8A Lihat perayaan</button>';
+        else if (nx) h += 'Siap lanjut? Berikutnya: ' + nx.e + ' ' + nx.n + '.</p></div><button class="on" data-go="' + nx.k + '">Lanjut ke Misi ' + (MS.indexOf(nx) + 1) + ': ' + nx.n + ' \u2192</button>';
+        el.innerHTML = h;
+      });
+    }
+    document.addEventListener('click', function (e) {var t = e.target.closest && e.target.closest('[data-go],[data-fin]'); if (!t) return; if (t.dataset.go) tab(t.dataset.go); else finale();});
+    var rsT = null;
+    $('pReset').onclick = function () {
+      if (!rsT) {$('pReset').textContent = 'Yakin? Klik lagi untuk reset'; rsT = setTimeout(function () {rsT = null; $('pReset').textContent = 'Reset progres';}, 3500); return;}
+      clearTimeout(rsT); rsT = null; $('pReset').textContent = 'Reset progres'; resetP();
+    };
+
+    $('pFxBtn').onclick = finale;
+    $('pMs').addEventListener('click', function (e) {var b = e.target.closest('[data-t]'); if (b) tab(b.dataset.t);});
+    $('mdone').addEventListener('click', function (e) {if (this.classList.contains('small')) hideCard();});
+    document.addEventListener('keydown', function (e) {if (e.key === 'Escape') hideCard();});
+    AU.init();
+    pLoad();
+    $('pName').value = P.name || '';
+    $('pName').addEventListener('input', function () {P.name = this.value.slice(0, 24); pSave();});
+    pRender();
+
+    /* Inisialisasi awal */
+    tpDraw(); buildSvg(); load();
+  </script>
+</body>
+
+</html>
